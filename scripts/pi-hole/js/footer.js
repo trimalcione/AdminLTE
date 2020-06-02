@@ -23,16 +23,16 @@ function piholeChanged(action) {
 
   switch (action) {
     case "enabled":
-      status.html("<i class='fa fa-circle text-green-light'></i> Active");
-      ena.hide();
-      dis.show();
-      dis.removeClass("active");
+      status.html("<i class='fas fa-circle text-green-light mr-1'></i> Active");
+      ena.addClass("d-none");
+      dis.removeClass("menu-open d-none");
+      dis.find(".nav.nav-treeview").hide(); // TODO
       break;
 
     case "disabled":
-      status.html("<i class='fa fa-circle text-red'></i> Offline");
-      ena.show();
-      dis.hide();
+      status.html("<i class='fas fa-circle text-red mr-1'></i> Offline");
+      ena.removeClass("d-none");
+      dis.addClass("d-none");
       break;
 
     default:
@@ -64,7 +64,7 @@ function piholeChange(action, duration) {
   switch (action) {
     case "enable":
       btnStatus = $("#flip-status-enable");
-      btnStatus.html("<i class='fa fa-spinner'> </i>");
+      btnStatus.html("<i class='fas fa-spinner'> </i>");
       $.getJSON("api.php?enable&token=" + token, function (data) {
         if (data.status === "enabled") {
           btnStatus.html("");
@@ -75,7 +75,7 @@ function piholeChange(action, duration) {
 
     case "disable":
       btnStatus = $("#flip-status-disable");
-      btnStatus.html("<i class='fa fa-spinner'> </i>");
+      btnStatus.html("<i class='fas fa-spinner'> </i>");
       $.getJSON("api.php?disable=" + duration + "&token=" + token, function (data) {
         if (data.status === "disabled") {
           btnStatus.html("");
@@ -105,7 +105,7 @@ function checkMessages() {
 
       $("#pihole-diagnosis").prop("title", title);
       $("#pihole-diagnosis-count").text(data.message_count);
-      $("#pihole-diagnosis").removeClass("hidden");
+      $("#pihole-diagnosis").removeClass("d-none");
     }
   });
 }
@@ -213,7 +213,7 @@ $(function () {
   }
 
   if (!testCookies() && $("#cookieInfo").length > 0) {
-    $("#cookieInfo").show();
+    $("#cookieInfo").removeClass("d-none");
   }
 
   // Apply per-browser styling settings

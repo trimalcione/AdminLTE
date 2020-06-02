@@ -105,7 +105,7 @@ function showAlert(type, icon, title, message) {
 }
 
 function datetime(date, html) {
-  var format = html === false ? "Y-MM-DD HH:mm:ss z" : "Y-MM-DD [<br class='hidden-lg'>]HH:mm:ss z";
+  var format = html === false ? "Y-MM-DD HH:mm:ss z" : "Y-MM-DD [<br class='d-lg-none'>]HH:mm:ss z";
   return moment.unix(Math.floor(date)).format(format);
 }
 

@@ -99,7 +99,7 @@ function add(domain, list) {
   // Reset Modal after it has faded out
   alertModal.one("hidden.bs.modal", function () {
     alProcessing.show();
-    alSuccess.add(alFailure).hide();
+    alSuccess.add(alFailure).addClass("d-none");
     alProcessing.add(alSuccess).children(alDomain).html("").end().children(alList).html("");
     alCustomErr.html("");
   });
@@ -185,76 +185,76 @@ $(function () {
           colorClass = "text-red";
           fieldtext = "Blocked (gravity)";
           buttontext =
-            '<button type="button" class="btn btn-default btn-sm text-green"><i class="fas fa-check"></i> Whitelist</button>';
+            '<button type="button" class="btn btn-light btn-sm text-green"><i class="fas fa-check"></i> Whitelist</button>';
           break;
         case "2":
           colorClass = "text-green";
-          fieldtext = "OK <br class='hidden-lg'>(forwarded)" + dnssecStatus;
+          fieldtext = "OK <br class='d-lg-none'>(forwarded)" + dnssecStatus;
           buttontext =
-            '<button type="button" class="btn btn-default btn-sm text-red"><i class="fa fa-ban"></i> Blacklist</button>';
+            '<button type="button" class="btn btn-light btn-sm text-red"><i class="fas fa-ban"></i> Blacklist</button>';
           break;
         case "3":
           colorClass = "text-green";
-          fieldtext = "OK <br class='hidden-lg'>(cached)" + dnssecStatus;
+          fieldtext = "OK <br class='d-lg-none'>(cached)" + dnssecStatus;
           buttontext =
-            '<button type="button" class="btn btn-default btn-sm text-red"><i class="fa fa-ban"></i> Blacklist</button>';
+            '<button type="button" class="btn btn-light btn-sm text-red"><i class="fas fa-ban"></i> Blacklist</button>';
           break;
         case "4":
           colorClass = "text-red";
-          fieldtext = "Blocked <br class='hidden-lg'>(regex blacklist)";
+          fieldtext = "Blocked <br class='d-lg-none'>(regex blacklist)";
 
           if (data.length > 9 && data[9] > 0) {
             regexLink = true;
           }
 
           buttontext =
-            '<button type="button" class="btn btn-default btn-sm text-green"><i class="fas fa-check"></i> Whitelist</button>';
+            '<button type="button" class="btn btn-light btn-sm text-green"><i class="fas fa-check"></i> Whitelist</button>';
           break;
         case "5":
           colorClass = "text-red";
-          fieldtext = "Blocked <br class='hidden-lg'>(exact blacklist)";
+          fieldtext = "Blocked <br class='d-lg-none'>(exact blacklist)";
           buttontext =
-            '<button type="button" class="btn btn-default btn-sm text-green"><i class="fas fa-check"></i> Whitelist</button>';
+            '<button type="button" class="btn btn-light btn-sm text-green"><i class="fas fa-check"></i> Whitelist</button>';
           break;
         case "6":
           colorClass = "text-red";
-          fieldtext = "Blocked <br class='hidden-lg'>(external, IP)";
+          fieldtext = "Blocked <br class='d-lg-none'>(external, IP)";
           buttontext = "";
           break;
         case "7":
           colorClass = "text-red";
-          fieldtext = "Blocked <br class='hidden-lg'>(external, NULL)";
+          fieldtext = "Blocked <br class='d-lg-none'>(external, NULL)";
           buttontext = "";
           break;
         case "8":
           colorClass = "text-red";
-          fieldtext = "Blocked <br class='hidden-lg'>(external, NXRA)";
+          fieldtext = "Blocked <br class='d-lg-none'>(external, NXRA)";
           buttontext = "";
           break;
         case "9":
           colorClass = "text-red";
           fieldtext = "Blocked (gravity, CNAME)";
           buttontext =
-            '<button type="button" class="btn btn-default btn-sm text-green"><i class="fas fa-check"></i> Whitelist</button>';
+            '<button type="button" class="btn btn-light btn-sm text-green"><i class="fas fa-check"></i> Whitelist</button>';
           isCNAME = true;
           break;
         case "10":
           colorClass = "text-red";
-          fieldtext = "Blocked <br class='hidden-lg'>(regex blacklist, CNAME)";
+          fieldtext = "Blocked <br class='d-lg-none'>(regex blacklist, CNAME)";
 
           if (data.length > 9 && data[9] > 0) {
             regexLink = true;
           }
 
           buttontext =
-            '<button type="button" class="btn btn-default btn-sm text-green"><i class="fas fa-check"></i> Whitelist</button>';
+            '<button type="button" class="btn btn-light btn-sm text-green"><i class="fas fa-check"></i> Whitelist</button>';
           isCNAME = true;
           break;
         case "11":
           colorClass = "text-red";
-          fieldtext = "Blocked <br class='hidden-lg'>(exact blacklist, CNAME)";
+          fieldtext = "Blocked <br class='d-lg-none'>(exact blacklist, CNAME)";
           buttontext =
-            '<button type="button" class="btn btn-default btn-sm text-green"><i class="fas fa-check"></i> Whitelist</button>';
+            '<button type="button" class="btn btn-light btn-sm text-green"><i class="fas fa-check"></i> Whitelist</button>';
           isCNAME = true;
           break;
         default:
@@ -355,7 +355,7 @@ $(function () {
           if (type === "display") {
             return moment
               .unix(Math.floor(data / 1e6))
-              .format("Y-MM-DD [<br class='hidden-lg'>]HH:mm:ss z");
+              .format("Y-MM-DD [<br class='d-lg-none'>]HH:mm:ss z");
           }
 
           return data;
@@ -565,9 +565,9 @@ function applyColumnFiltering() {
   });
 
   if (showReset) {
-    $("#resetButton").removeClass("hidden");
+    $("#resetButton").removeClass("d-none");
   } else {
-    $("#resetButton").addClass("hidden");
+    $("#resetButton").addClass("d-none");
   }
 
   // Trigger table update
