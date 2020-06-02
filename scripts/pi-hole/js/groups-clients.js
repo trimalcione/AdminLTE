@@ -116,7 +116,7 @@ function initTable() {
         data.id +
         '" title="' +
         tooltip +
-        '" class="breakall">' +
+        '" class="text-break">' +
         data.ip +
         "</code>";
       if (data.name !== null && data.name.length > 0)
@@ -125,7 +125,7 @@ function initTable() {
           data.id +
           '" title="' +
           tooltip +
-          '" class="breakall">' +
+          '" class="text-break">' +
           data.name +
           "</code>";
       $("td:eq(0)", row).html(ipName);
@@ -247,15 +247,15 @@ function initTable() {
   table.on("order.dt", function () {
     var order = table.order();
     if (order[0][0] !== 0 || order[0][1] !== "asc") {
-      $("#resetButton").removeClass("hidden");
+      $("#resetButton").removeClass("d-none");
     } else {
-      $("#resetButton").addClass("hidden");
+      $("#resetButton").addClass("d-none");
     }
   });
 
   $("#resetButton").on("click", function () {
     table.order([[0, "asc"]]).draw();
-    $("#resetButton").addClass("hidden");
+    $("#resetButton").addClass("d-none");
   });
 }
 
