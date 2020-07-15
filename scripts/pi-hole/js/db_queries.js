@@ -255,7 +255,7 @@ $(function () {
 
   tableApi = $("#all-queries").DataTable({
     rowCallback: function (row, data) {
-      var fieldtext, buttontext, color;
+      var fieldtext, buttontext, color, regexID = null, CNAMEDomain = null;
       switch (data[4]) {
         case 1:
           color = "red";
@@ -280,6 +280,15 @@ $(function () {
           fieldtext = "Blocked <br class='hidden-lg'>(regex blacklist)";
           buttontext =
             '<button type="button" class="btn btn-default btn-sm text-green"><i class="fas fa-check"></i> Whitelist</button>';
+
+          if (data[5] !== null) {
+            // Can be a string containing a number, a domain, can be empty
+            // We require the input to be a number of any kind
+            var num = parseInt(data[5], 10);
+            if(Number.isInteger(num)) {
+              regexID = num;
+            }
+          }
           break;
         case 5:
           color = "red";
@@ -307,18 +316,30 @@ $(function () {
           fieldtext = "Blocked (gravity, CNAME)";
           buttontext =
             '<button type="button" class="btn btn-default btn-sm text-green"><i class="fas fa-check"></i> Whitelist</button>';
+
+          if (data[5] !== null) {
+            CNAMEDomain = data[5];
+          }
           break;
         case 10:
           color = "red";
           fieldtext = "Blocked <br class='hidden-lg'>(regex blacklist, CNAME)";
           buttontext =
             '<button type="button" class="btn btn-default btn-sm text-green"><i class="fas fa-check"></i> Whitelist</button>';
+
+          if (data[5] !== null) {
+            CNAMEDomain = data[5];
+          }
           break;
         case 11:
           color = "red";
           fieldtext = "Blocked <br class='hidden-lg'>(exact blacklist, CNAME)";
           buttontext =
             '<button type="button" class="btn btn-default btn-sm text-green"><i class="fas fa-check"></i> Whitelist</button>';
+
+          if (data[5] !== null) {
+            CNAMEDomain = data[5];
+          }
           break;
         default:
           color = "black";
@@ -328,6 +349,26 @@ $(function () {
 
       $(row).css("color", color);
       $("td:eq(4)", row).html(fieldtext);
+      if (regexID !== null) {
+        $("td:eq(4)", row).hover(
+          function () {
+            this.title = "Click to show matching regex filter";
+            this.style.color = "#72afd2";
+          },
+          function () {
+            this.style.color = "";
+          }
+        );
+        $("td:eq(4)", row).off(); // Release any possible previous onClick event handlers
+        $("td:eq(4)", row).click(function () {
+          var newTab = window.open("groups-domains.php?domainid=" + regexID, "_blank");
+          if (newTab) {
+            newTab.focus();
+          }
+        });
+        $("td:eq(4)", row).addClass("text-underline pointer");
+      }
+
       $("td:eq(5)", row).html(buttontext);
 
       // Substitute domain by "." if empty
@@ -336,7 +377,11 @@ $(function () {
         domain = ".";
       }
 
-      $("td:eq(2)", row).text(domain);
+      if(CNAMEDomain === null) {
+        $("td:eq(2)", row).text(domain);
+      } else {
+        $("td:eq(2)", row).text(domain + "\n(blocked " + CNAMEDomain + ")");
+      }
     },
     dom:
       "<'row'<'col-sm-12'f>>" +
