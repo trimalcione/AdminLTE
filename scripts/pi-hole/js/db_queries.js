@@ -156,6 +156,11 @@ function handleAjaxError(xhr, textStatus) {
 
 function getQueryTypes() {
   var queryType = [];
+
+  if ($("#type_unknown").prop("checked")) {
+    queryType.push(0);
+  }
+
   if ($("#type_gravity").prop("checked")) {
     queryType.push(1);
   }
@@ -255,7 +260,11 @@ $(function () {
 
   tableApi = $("#all-queries").DataTable({
     rowCallback: function (row, data) {
-      var fieldtext, buttontext, color, regexID = null, CNAMEDomain = null;
+      var fieldtext,
+        buttontext,
+        color = null,
+        regexID = null,
+        CNAMEDomain = null;
       switch (data[4]) {
         case 1:
           color = "red";
@@ -285,10 +294,11 @@ $(function () {
             // Can be a string containing a number, a domain, can be empty
             // We require the input to be a number of any kind
             var num = parseInt(data[5], 10);
-            if(Number.isInteger(num)) {
+            if (Number.isInteger(num)) {
               regexID = num;
             }
           }
+
           break;
         case 5:
           color = "red";
@@ -320,6 +330,7 @@ $(function () {
           if (data[5] !== null) {
             CNAMEDomain = data[5];
           }
+
           break;
         case 10:
           color = "red";
@@ -330,6 +341,7 @@ $(function () {
           if (data[5] !== null) {
             CNAMEDomain = data[5];
           }
+
           break;
         case 11:
           color = "red";
@@ -340,14 +352,17 @@ $(function () {
           if (data[5] !== null) {
             CNAMEDomain = data[5];
           }
+
           break;
         default:
-          color = "black";
           fieldtext = "Unknown";
           buttontext = "";
       }
 
-      $(row).css("color", color);
+      if (color !== null) {
+        $(row).css("color", color);
+      }
+
       $("td:eq(4)", row).html(fieldtext);
       if (regexID !== null) {
         $("td:eq(4)", row).hover(
@@ -377,7 +392,7 @@ $(function () {
         domain = ".";
       }
 
-      if(CNAMEDomain === null) {
+      if (CNAMEDomain === null) {
         $("td:eq(2)", row).text(domain);
       } else {
         $("td:eq(2)", row).text(domain + "\n(blocked " + CNAMEDomain + ")");

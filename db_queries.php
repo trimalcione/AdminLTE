@@ -41,24 +41,25 @@
     <div class="col-md-12">
         <label>Query status:</label>
     </div>
-    <div class="form-group">
-        <div class="col-md-3">
-            <div><input type="checkbox" id="type_forwarded" checked><label for="type_forwarded">Permitted: forwarded</label><br></div>
-            <div><input type="checkbox" id="type_cached" checked><label for="type_cached">Permitted: cached</label></div>
-        </div>
-        <div class="col-md-3">
-            <div><input type="checkbox" id="type_gravity" checked><label for="type_gravity">Blocked: gravity</label><br></div>
-            <div><input type="checkbox" id="type_external" checked><label for="type_external">Blocked: external</label></div>
-        </div>
-        <div class="col-md-3">
-            <div><input type="checkbox" id="type_blacklist" checked><label for="type_blacklist">Blocked: exact blacklist</label><br></div>
-            <div><input type="checkbox" id="type_regex" checked><label for="type_regex">Blocked: regex blacklist</label></div>
-        </div>
-        <div class="col-md-3">
-            <div><input type="checkbox" id="type_gravity_CNAME" checked><label for="type_gravity_CNAME">Blocked: gravity (CNAME)</label><br></div>
-            <div><input type="checkbox" id="type_blacklist_CNAME" checked><label for="type_blacklist_CNAME">Blocked: exact blacklist (CNAME)</label><br></div>
-            <div><input type="checkbox" id="type_regex_CNAME" checked><label for="type_regex_CNAME">Blocked: regex blacklist (CNAME)</label></div>
-        </div>
+    <div class="form-group col-md-2">
+        <div><input type="checkbox" id="type_forwarded" checked><label for="type_forwarded">Permitted: forwarded</label><br></div>
+        <div><input type="checkbox" id="type_cached" checked><label for="type_cached">Permitted: cached</label></div>
+    </div>
+    <div class="form-group col-md-2">
+        <div><input type="checkbox" id="type_gravity" checked><label for="type_gravity">Blocked: gravity</label><br></div>
+        <div><input type="checkbox" id="type_external" checked><label for="type_external">Blocked: external</label></div>
+    </div>
+    <div class="form-group col-md-2">
+        <div><input type="checkbox" id="type_blacklist" checked><label for="type_blacklist">Blocked: exact blacklist</label><br></div>
+        <div><input type="checkbox" id="type_regex" checked><label for="type_regex">Blocked: regex blacklist</label></div>
+    </div>
+    <div class="form-group col-md-3">
+        <div><input type="checkbox" id="type_gravity_CNAME" checked><label for="type_gravity_CNAME">Blocked: gravity (CNAME)</label><br></div>
+        <div><input type="checkbox" id="type_blacklist_CNAME" checked><label for="type_blacklist_CNAME">Blocked: exact blacklist (CNAME)</label></div>
+    </div>
+    <div class="form-group col-md-3">
+        <div><input type="checkbox" id="type_regex_CNAME" checked><label for="type_regex_CNAME">Blocked: regex blacklist (CNAME)</label><br></div>
+        <div><input type="checkbox" id="type_unknown" checked><label for="type_unknown">Failed queries</label></div>
     </div>
 </div>
 
