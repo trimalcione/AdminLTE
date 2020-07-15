@@ -220,6 +220,11 @@ function getGraphType() {
   return localStorage.getItem("barchart_chkbox") === "false" ? "line" : "bar";
 }
 
+// Number.isInteger() is not supported by IE 11
+function isInteger(value) {
+  return typeof value === "number" && isFinite(value) && Math.floor(value) === value;
+}
+
 window.utils = (function () {
   return {
     escapeHtml: escapeHtml,
@@ -234,6 +239,7 @@ window.utils = (function () {
     setBsSelectDefaults: setBsSelectDefaults,
     stateSaveCallback: stateSaveCallback,
     stateLoadCallback: stateLoadCallback,
-    getGraphType: getGraphType
+    getGraphType: getGraphType,
+    isInteger: isInteger
   };
 })();

@@ -6,6 +6,7 @@
  *  Please see LICENSE file for your rights under this license. */
 
 /* global moment:false */
+/* global utils:false */
 
 var start__ = moment().subtract(6, "days");
 var from = moment(start__).utc().valueOf() / 1000;
@@ -294,7 +295,7 @@ $(function () {
             // Can be a string containing a number, a domain, can be empty
             // We require the input to be a number of any kind
             var num = parseInt(data[5], 10);
-            if (Number.isInteger(num)) {
+            if (utils.isInteger(num)) {
               regexID = num;
             }
           }

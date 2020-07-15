@@ -162,6 +162,7 @@
 <!-- /.row -->
 
 <script src="scripts/vendor/daterangepicker.min.js"></script>
+<script src="scripts/pi-hole/js/utils.js"></script>
 <script src="scripts/pi-hole/js/db_queries.js"></script>
 
 <?php
