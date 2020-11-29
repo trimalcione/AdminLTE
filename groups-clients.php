@@ -34,7 +34,6 @@
                                 <select id="select" class="form-control" placeholder="">
                                     <option disabled selected>Loading...</option>
                                 </select>
-                                <input id="ip-custom" type="text" class="form-control mt-3" disabled placeholder="Client IP address (IPv4 or IPv6, CIDR subnetting available, optional)" autocomplete="off" spellcheck="false" autocapitalize="none" autocorrect="off">
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="new_comment">Comment:</label>
