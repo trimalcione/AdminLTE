@@ -170,9 +170,10 @@
         </div> <!-- /.row -->
     </div> <!-- /.container-fluid -->
 </div> <!-- /.content -->
+
 <script src="scripts/pi-hole/js/ip-address-sorting.js?v=<?=$cacheVer?>"></script>
-<script src="scripts/vendor/daterangepicker.min.jsv=<?=$cacheVer?>"></script>
-<script src="scripts/pi-hole/js/db_queries.jsv=<?=$cacheVer?>"></script>
+<script src="scripts/vendor/daterangepicker.min.js?v=<?=$cacheVer?>"></script>
+<script src="scripts/pi-hole/js/db_queries.js?v=<?=$cacheVer?>"></script>
 
 <?php
     require "scripts/pi-hole/php/footer.php";
