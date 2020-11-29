@@ -30,7 +30,7 @@ if(isset($setupVars["API_QUERY_LOG_SHOW"]))
 }
 else if(isset($_GET["type"]) && $_GET["type"] === "blocked")
 {
-	$showing = "showing blocked";
+    $showing = "showing blocked";
 }
 else
 {
@@ -50,21 +50,21 @@ else if(isset($_GET["client"]))
 }
 else if(isset($_GET["forwarddest"]))
 {
-	if($_GET["forwarddest"] === "blocklist")
-		$showing .= " queries answered from blocklists";
-	elseif($_GET["forwarddest"] === "cache")
-		$showing .= " queries answered from cache";
-	else
-		$showing .= " queries for upstream destination ".htmlentities($_GET["forwarddest"]);
+    if($_GET["forwarddest"] === "blocklist")
+        $showing .= " queries answered from blocklists";
+    elseif($_GET["forwarddest"] === "cache")
+        $showing .= " queries answered from cache";
+    else
+        $showing .= " queries for upstream destination ".htmlentities($_GET["forwarddest"]);
 }
 else if(isset($_GET["querytype"]))
 {
-	$qtypes = ["A (IPv4)", "AAAA (IPv6)", "ANY", "SRV", "SOA", "PTR", "TXT", "NAPTR"];
-	$qtype = intval($_GET["querytype"]);
-	if($qtype > 0 && $qtype <= count($qtypes))
-		$showing .= " ".$qtypes[$qtype-1]." queries";
-	else
-		$showing .= " type ".$qtype." queries";
+    $qtypes = ["A (IPv4)", "AAAA (IPv6)", "ANY", "SRV", "SOA", "PTR", "TXT", "NAPTR"];
+    $qtype = intval($_GET["querytype"]);
+    if($qtype > 0 && $qtype <= count($qtypes))
+        $showing .= " ".$qtypes[$qtype-1]." queries";
+    else
+        $showing .= " type ".$qtype." queries";
 }
 else if(isset($_GET["domain"]))
 {
@@ -164,7 +164,8 @@ if(strlen($showing) > 0)
                 <li>Click a value in a column to add/remove that value to/from the filter</li>
                 <li>On a computer: Hold down <kbd>Ctrl</kbd>, <kbd>Alt</kbd>, or <kbd>&#8984;</kbd> to allow highlighting for copying to clipboard</li>
                 <li>On a mobile: Long press to highlight the text and enable copying to clipboard
-            </ul><br/><button type="button" id="resetButton" class="btn btn-default btn-sm my-2 d-none">Clear filters</button>
+            </ul>
+            <button type="button" id="resetButton" class="btn btn-danger btn-sm my-2 d-none">Clear filters</button>
         </div>
       </div>
     </div> <!-- /.container-fluid -->
