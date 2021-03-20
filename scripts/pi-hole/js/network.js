@@ -7,14 +7,14 @@
 
 /* global utils:false */
 
-var tableApi;
+let tableApi;
 
-var API_STRING = "api_db.php?network";
+const API_STRING = "api_db.php?network";
 
 // How many IPs do we show at most per device?
-var MAXIPDISPLAY = 3;
+const MAXIPDISPLAY = 3;
 
-var DAY_IN_SECONDS = 24 * 60 * 60;
+const DAY_IN_SECONDS = 24 * 60 * 60;
 
 function handleAjaxError(xhr, textStatus) {
   if (textStatus === "timeout") {
@@ -35,7 +35,7 @@ function getTimestamp() {
 }
 
 function valueToHex(c) {
-  var hex = Math.round(c).toString(16);
+  const hex = Math.round(c).toString(16);
   return hex.length === 1 ? "0" + hex : hex;
 }
 
@@ -52,32 +52,32 @@ function mixColors(ratio, rgb1, rgb2) {
 }
 
 function parseColor(input) {
-  var match = input.match(/^rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/i);
+  const match = input.match(/^rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/i);
 
   if (match) {
     return [match[1], match[2], match[3]];
   }
 }
 
-$(function () {
+$(() => {
   tableApi = $("#network-entries").DataTable({
-    rowCallback: function (row, data) {
-      var color;
-      var index;
-      var maxiter;
-      var iconClasses;
-      var lastQuery = parseInt(data.lastQuery, 10);
-      var diff = getTimestamp() - lastQuery;
-      var networkRecent = $(".network-recent").css("background-color");
-      var networkOld = $(".network-old").css("background-color");
-      var networkOlder = $(".network-older").css("background-color");
-      var networkNever = $(".network-never").css("background-color");
+    rowCallback(row, data) {
+      let color;
+      let index;
+      let maxiter;
+      let iconClasses;
+      const lastQuery = parseInt(data.lastQuery, 10);
+      const diff = getTimestamp() - lastQuery;
+      const networkRecent = $(".network-recent").css("background-color");
+      const networkOld = $(".network-old").css("background-color");
+      const networkOlder = $(".network-older").css("background-color");
+      const networkNever = $(".network-never").css("background-color");
 
       if (lastQuery > 0) {
         if (diff <= DAY_IN_SECONDS) {
           // Last query came in within the last 24 hours
           // Color: light-green to light-yellow
-          var ratio = Number(diff) / DAY_IN_SECONDS;
+          const ratio = Number(diff) / DAY_IN_SECONDS;
           color = rgbToHex(mixColors(ratio, parseColor(networkRecent), parseColor(networkOld)));
           iconClasses = "fas fa-check";
         } else {
@@ -106,8 +106,8 @@ $(function () {
       if (!data.name || data.name.length === 0) {
         $("td:eq(3)", row).html("<em>unknown</em>");
       } else {
-        var names = [];
-        var name = "";
+        const names = [];
+        let name = "";
         maxiter = Math.min(data.name.length, MAXIPDISPLAY);
         index = 0;
         for (index = 0; index < maxiter; index++) {
@@ -123,7 +123,7 @@ $(function () {
         }
 
         maxiter = Math.min(data.ip.length, data.name.length);
-        var allnames = [];
+        const allnames = [];
         for (index = 0; index < maxiter; index++) {
           name = data.name[index];
           if (name.length > 0) {
@@ -142,11 +142,11 @@ $(function () {
       // Set number of queries to localized string (add thousand separators)
       $("td:eq(6)", row).html(data.numQueries.toLocaleString());
 
-      var ips = [];
+      const ips = [];
       maxiter = Math.min(data.ip.length, MAXIPDISPLAY);
       index = 0;
       for (index = 0; index < maxiter; index++) {
-        var ip = data.ip[index];
+        const ip = data.ip[index];
         ips.push('<a href="queries.php?client=' + ip + '">' + ip + "</a>");
       }
 
@@ -188,7 +188,7 @@ $(function () {
       {
         data: "firstSeen",
         width: "8%",
-        render: function (data, type) {
+        render(data, type) {
           if (type === "display") {
             return utils.datetime(data);
           }
@@ -199,7 +199,7 @@ $(function () {
       {
         data: "lastQuery",
         width: "8%",
-        render: function (data, type) {
+        render(data, type) {
           if (type === "display") {
             return utils.datetime(data);
           }
@@ -215,10 +215,10 @@ $(function () {
       [10, 25, 50, 100, "All"]
     ],
     stateSave: true,
-    stateSaveCallback: function (settings, data) {
+    stateSaveCallback(settings, data) {
       utils.stateSaveCallback("network_table", data);
     },
-    stateLoadCallback: function () {
+    stateLoadCallback() {
       return utils.stateLoadCallback("network_table");
     },
     columnDefs: [
@@ -230,7 +230,7 @@ $(function () {
     ]
   });
   // Disable autocorrect in the search box
-  var input = document.querySelector("input[type=search]");
+  const input = document.querySelector("input[type=search]");
   input.setAttribute("autocomplete", "off");
   input.setAttribute("autocorrect", "off");
   input.setAttribute("autocapitalize", "off");

@@ -7,17 +7,17 @@
 
 /* global utils:false, moment:false */
 
-var start__ = moment().subtract(6, "days");
-var from = moment(start__).utc().valueOf() / 1000;
-var end__ = moment();
-var until = moment(end__).utc().valueOf() / 1000;
+const start__ = moment().subtract(6, "days");
+let from = moment(start__).utc().valueOf() / 1000;
+const end__ = moment();
+let until = moment(end__).utc().valueOf() / 1000;
 
-var timeoutWarning = $("#timeoutWarning");
-var listsStillLoading = 0;
+const timeoutWarning = $("#timeoutWarning");
+let listsStillLoading = 0;
 
-var dateformat = "MMMM Do YYYY, HH:mm";
+const dateformat = "MMMM Do YYYY, HH:mm";
 
-$(function () {
+$(() => {
   $("#querytime").daterangepicker(
     {
       timePicker: true,
@@ -46,7 +46,7 @@ $(function () {
       showDropdowns: true,
       autoUpdateInput: false
     },
-    function (startt, endt) {
+    (startt, endt) => {
       from = moment(startt).utc().valueOf() / 1000;
       until = moment(endt).utc().valueOf() / 1000;
     }
@@ -55,12 +55,12 @@ $(function () {
 
 function updateTopClientsChart() {
   $("#client-frequency .overlay").show();
-  $.getJSON("api_db.php?topClients&from=" + from + "&until=" + until, function (data) {
+  $.getJSON("api_db.php?topClients&from=" + from + "&until=" + until, data => {
     // Clear tables before filling them with data
     $("#client-frequency td").parent().remove();
-    var clienttable = $("#client-frequency").find("tbody:last");
-    var client, percentage, clientname;
-    var sum = 0;
+    const clienttable = $("#client-frequency").find("tbody:last");
+    let client, percentage, clientname;
+    let sum = 0;
     for (client in data.top_sources) {
       if (Object.prototype.hasOwnProperty.call(data.top_sources, client)) {
         sum += data.top_sources[client];
@@ -77,7 +77,7 @@ function updateTopClientsChart() {
         }
 
         if (client.indexOf("|") !== -1) {
-          var idx = client.indexOf("|");
+          const idx = client.indexOf("|");
           clientname = client.substr(0, idx);
         } else {
           clientname = client;
@@ -109,12 +109,12 @@ function updateTopClientsChart() {
 
 function updateTopDomainsChart() {
   $("#domain-frequency .overlay").show();
-  $.getJSON("api_db.php?topDomains&from=" + from + "&until=" + until, function (data) {
+  $.getJSON("api_db.php?topDomains&from=" + from + "&until=" + until, data => {
     // Clear tables before filling them with data
     $("#domain-frequency td").parent().remove();
-    var domaintable = $("#domain-frequency").find("tbody:last");
-    var domain, percentage;
-    var sum = 0;
+    const domaintable = $("#domain-frequency").find("tbody:last");
+    let domain, percentage;
+    let sum = 0;
     for (domain in data.top_domains) {
       if (Object.prototype.hasOwnProperty.call(data.top_domains, domain)) {
         sum += data.top_domains[domain];
@@ -156,12 +156,12 @@ function updateTopDomainsChart() {
 
 function updateTopAdsChart() {
   $("#ad-frequency .overlay").show();
-  $.getJSON("api_db.php?topAds&from=" + from + "&until=" + until, function (data) {
+  $.getJSON("api_db.php?topAds&from=" + from + "&until=" + until, data => {
     // Clear tables before filling them with data
     $("#ad-frequency td").parent().remove();
-    var adtable = $("#ad-frequency").find("tbody:last");
-    var ad, percentage;
-    var sum = 0;
+    const adtable = $("#ad-frequency").find("tbody:last");
+    let ad, percentage;
+    let sum = 0;
     for (ad in data.top_ads) {
       if (Object.prototype.hasOwnProperty.call(data.top_ads, ad)) {
         sum += data.top_ads[ad];

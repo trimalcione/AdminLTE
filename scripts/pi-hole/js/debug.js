@@ -6,10 +6,10 @@
  *  Please see LICENSE file for your rights under this license. */
 
 function eventsource() {
-  var ta = $("#output");
-  var upload = $("#upload");
-  var checked = "";
-  var token = encodeURIComponent($("#token").text());
+  const ta = $("#output");
+  const upload = $("#upload");
+  let checked = "";
+  const token = encodeURIComponent($("#token").text());
 
   if (upload.prop("checked")) {
     checked = "upload";
@@ -21,7 +21,7 @@ function eventsource() {
       method: "GET",
       url: "scripts/pi-hole/php/debug.php?IE&token=" + token + "&" + checked,
       async: false
-    }).done(function (data) {
+    }).done(data => {
       ta.show();
       ta.empty();
       ta.append(data);
@@ -30,7 +30,7 @@ function eventsource() {
   }
 
   // eslint-disable-next-line compat/compat
-  var source = new EventSource("scripts/pi-hole/php/debug.php?&token=" + token + "&" + checked);
+  const source = new EventSource("scripts/pi-hole/php/debug.php?&token=" + token + "&" + checked);
 
   // Reset and show field
   ta.empty();
@@ -38,7 +38,7 @@ function eventsource() {
 
   source.addEventListener(
     "message",
-    function (e) {
+    e => {
       ta.append(e.data);
     },
     false
@@ -47,14 +47,14 @@ function eventsource() {
   // Will be called when script has finished
   source.addEventListener(
     "error",
-    function () {
+    () => {
       source.close();
     },
     false
   );
 }
 
-$("#debugBtn").on("click", function () {
+$("#debugBtn").on("click", () => {
   $("#debugBtn").prop("disabled", true);
   $("#upload").prop("disabled", true);
   eventsource();

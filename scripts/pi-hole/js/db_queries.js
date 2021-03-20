@@ -7,19 +7,19 @@
 
 /* global moment:false, utils:false */
 
-var start__ = moment().subtract(6, "days");
-var from = moment(start__).utc().valueOf() / 1000;
-var end__ = moment();
-var until = moment(end__).utc().valueOf() / 1000;
-var instantquery = false;
-var daterange;
+let start__ = moment().subtract(6, "days");
+let from = moment(start__).utc().valueOf() / 1000;
+let end__ = moment();
+let until = moment(end__).utc().valueOf() / 1000;
+let instantquery = false;
+let daterange;
 
-var timeoutWarning = $("#timeoutWarning");
+const timeoutWarning = $("#timeoutWarning");
 
-var dateformat = "MMMM Do YYYY, HH:mm";
+const dateformat = "MMMM Do YYYY, HH:mm";
 
 // Do we want to filter queries?
-var GETDict = {};
+const GETDict = {};
 for (const item of window.location.search.substr(1).split("&")) {
   GETDict[item.split("=")[0]] = item.split("=")[1];
 }
@@ -32,7 +32,7 @@ if ("from" in GETDict && "until" in GETDict) {
   instantquery = true;
 }
 
-$(function () {
+$(() => {
   daterange = $("#querytime").daterangepicker(
     {
       timePicker: true,
@@ -61,14 +61,14 @@ $(function () {
       showDropdowns: true,
       autoUpdateInput: false
     },
-    function (startt, endt) {
+    (startt, endt) => {
       from = moment(startt).utc().valueOf() / 1000;
       until = moment(endt).utc().valueOf() / 1000;
     }
   );
 });
 
-var tableApi, statistics;
+let tableApi, statistics;
 
 function handleAjaxError(xhr, textStatus) {
   if (textStatus === "timeout") {
@@ -89,7 +89,7 @@ function handleAjaxError(xhr, textStatus) {
 }
 
 function getQueryTypes() {
-  var queryType = [];
+  const queryType = [];
   if ($("#type_gravity").prop("checked")) {
     queryType.push(1);
   }
@@ -137,11 +137,11 @@ function getQueryTypes() {
   return queryType.join(",");
 }
 
-var reloadCallback = function () {
+const reloadCallback = function () {
   timeoutWarning.hide();
   statistics = [0, 0, 0, 0];
-  var data = tableApi.rows().data();
-  for (var i = 0; i < data.length; i++) {
+  const data = tableApi.rows().data();
+  for (let i = 0; i < data.length; i++) {
     statistics[0]++; // TOTAL query
     if (data[i][4] === 1 || (data[i][4] > 4 && ![10, 12, 13, 14].includes(data[i][4]))) {
       statistics[2]++; // EXACT blocked
@@ -156,7 +156,7 @@ var reloadCallback = function () {
   $("h3#ads_blocked_exact").text(statistics[2].toLocaleString());
   $("h3#ads_wildcard_blocked").text(statistics[3].toLocaleString());
 
-  var percent = 0;
+  let percent = 0;
   if (statistics[2] + statistics[3] > 0) {
     percent = (100 * (statistics[2] + statistics[3])) / statistics[0];
   }
@@ -166,9 +166,9 @@ var reloadCallback = function () {
 
 function refreshTableData() {
   timeoutWarning.show();
-  var APIstring = "api_db.php?getAllQueries&from=" + from + "&until=" + until;
+  let APIstring = "api_db.php?getAllQueries&from=" + from + "&until=" + until;
   // Check if query type filtering is enabled
-  var queryType = getQueryTypes();
+  const queryType = getQueryTypes();
   if (queryType !== "1,2,3,4,5,6") {
     APIstring += "&types=" + queryType;
   }
@@ -177,21 +177,21 @@ function refreshTableData() {
   tableApi.ajax.url(APIstring).load(reloadCallback);
 }
 
-$(function () {
-  var APIstring = instantquery
+$(() => {
+  let APIstring = instantquery
     ? "api_db.php?getAllQueries&from=" + from + "&until=" + until
     : "api_db.php?getAllQueries=empty";
 
   // Check if query type filtering is enabled
-  var queryType = getQueryTypes();
+  const queryType = getQueryTypes();
   if (queryType !== 63) {
     // 63 (0b00111111) = all possible query types are selected
     APIstring += "&types=" + queryType;
   }
 
   tableApi = $("#all-queries").DataTable({
-    rowCallback: function (row, data) {
-      var fieldtext, buttontext, color;
+    rowCallback(row, data) {
+      let fieldtext, buttontext, color;
       switch (data[4]) {
         case 1:
           color = "red";
@@ -286,7 +286,7 @@ $(function () {
       $("td:eq(5)", row).html(buttontext);
 
       // Substitute domain by "." if empty
-      var domain = data[2];
+      let domain = data[2];
       if (domain.length === 0) {
         domain = ".";
       }
@@ -301,9 +301,9 @@ $(function () {
     ajax: {
       url: APIstring,
       error: handleAjaxError,
-      dataSrc: function (data) {
-        var dataIndex = 0;
-        return data.data.map(function (x) {
+      dataSrc(data) {
+        let dataIndex = 0;
+        return data.data.map(x => {
           x[0] = x[0] * 1e6 + dataIndex++;
           return x;
         });
@@ -316,7 +316,7 @@ $(function () {
     columns: [
       {
         width: "15%",
-        render: function (data, type) {
+        render(data, type) {
           if (type === "display") {
             return moment
               .unix(Math.floor(data / 1e6))
@@ -346,7 +346,7 @@ $(function () {
     initComplete: reloadCallback
   });
   $("#all-queries tbody").on("click", "button", function () {
-    var data = tableApi.row($(this).parents("tr")).data();
+    const data = tableApi.row($(this).parents("tr")).data();
     if ([1, 4, 5, 9, 10, 11].indexOf(data[4]) !== -1) {
       utils.addFromQueryLog(data[2], "white");
     } else {

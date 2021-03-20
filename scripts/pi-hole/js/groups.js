@@ -7,16 +7,16 @@
 
 /* global utils:false */
 
-var table;
-var token = $("#token").text();
+let table;
+const token = $("#token").text();
 
-$(function () {
+$(() => {
   $("#btnAdd").on("click", addGroup);
 
   table = $("#groupsTable").DataTable({
     ajax: {
       url: "scripts/pi-hole/php/groups.php",
-      data: { action: "get_groups", token: token },
+      data: { action: "get_groups", token },
       type: "POST"
     },
     order: [[0, "asc"]],
@@ -27,12 +27,12 @@ $(function () {
       { data: "description" },
       { data: null, width: "60px", orderable: false }
     ],
-    drawCallback: function () {
+    drawCallback() {
       $('button[id^="deleteGroup_"]').on("click", deleteGroup);
     },
-    rowCallback: function (row, data) {
+    rowCallback(row, data) {
       $(row).attr("data-id", data.id);
-      var tooltip =
+      const tooltip =
         "Added: " +
         utils.datetime(data.date_added, false) +
         "\nLast modified: " +
@@ -42,15 +42,15 @@ $(function () {
       $("td:eq(0)", row).html(
         '<input id="name_' + data.id + '" title="' + tooltip + '" class="form-control">'
       );
-      var nameEl = $("#name_" + data.id, row);
+      const nameEl = $("#name_" + data.id, row);
       nameEl.val(utils.unescapeHtml(data.name));
       nameEl.on("change", editGroup);
 
-      var disabled = data.enabled === 0;
+      const disabled = data.enabled === 0;
       $("td:eq(1)", row).html(
         '<input type="checkbox" id="status_' + data.id + '"' + (disabled ? "" : " checked") + ">"
       );
-      var statusEl = $("#status_" + data.id, row);
+      const statusEl = $("#status_" + data.id, row);
       statusEl.bootstrapToggle({
         on: "Enabled",
         off: "Disabled",
@@ -61,14 +61,14 @@ $(function () {
       statusEl.on("change", editGroup);
 
       $("td:eq(2)", row).html('<input id="desc_' + data.id + '" class="form-control">');
-      var desc = data.description !== null ? data.description : "";
-      var descEl = $("#desc_" + data.id, row);
+      const desc = data.description !== null ? data.description : "";
+      const descEl = $("#desc_" + data.id, row);
       descEl.val(utils.unescapeHtml(desc));
       descEl.on("change", editGroup);
 
       $("td:eq(3)", row).empty();
       if (data.id !== 0) {
-        var button =
+        const button =
           '<button type="button" class="btn btn-danger btn-xs" id="deleteGroup_' +
           data.id +
           '">' +
@@ -86,11 +86,11 @@ $(function () {
       [10, 25, 50, 100, "All"]
     ],
     stateSave: true,
-    stateSaveCallback: function (settings, data) {
+    stateSaveCallback(settings, data) {
       utils.stateSaveCallback("groups-table", data);
     },
-    stateLoadCallback: function () {
-      var data = utils.stateLoadCallback("groups-table");
+    stateLoadCallback() {
+      const data = utils.stateLoadCallback("groups-table");
 
       // Return if not available
       if (data === null) {
@@ -105,7 +105,7 @@ $(function () {
   });
 
   // Disable autocorrect in the search box
-  var input = document.querySelector("input[type=search]");
+  const input = document.querySelector("input[type=search]");
   if (input !== null) {
     input.setAttribute("autocomplete", "off");
     input.setAttribute("autocorrect", "off");
@@ -113,23 +113,23 @@ $(function () {
     input.setAttribute("spellcheck", false);
   }
 
-  table.on("order.dt", function () {
-    var order = table.order();
+  table.on("order.dt", () => {
+    const order = table.order();
     if (order[0][0] !== 0 || order[0][1] !== "asc") {
       $("#resetButton").removeClass("hidden");
     } else {
       $("#resetButton").addClass("hidden");
     }
   });
-  $("#resetButton").on("click", function () {
+  $("#resetButton").on("click", () => {
     table.order([[0, "asc"]]).draw();
     $("#resetButton").addClass("hidden");
   });
 });
 
 function addGroup() {
-  var name = utils.escapeHtml($("#new_name").val());
-  var desc = utils.escapeHtml($("#new_desc").val());
+  const name = utils.escapeHtml($("#new_name").val());
+  const desc = utils.escapeHtml($("#new_desc").val());
 
   utils.disableAll();
   utils.showAlert("info", "", "Adding group...", name);
@@ -145,8 +145,8 @@ function addGroup() {
     url: "scripts/pi-hole/php/groups.php",
     method: "post",
     dataType: "json",
-    data: { action: "add_group", name: name, desc: desc, token: token },
-    success: function (response) {
+    data: { action: "add_group", name, desc, token },
+    success(response) {
       utils.enableAll();
       if (response.success) {
         utils.showAlert("success", "fas fa-plus", "Successfully added group", name);
@@ -157,7 +157,7 @@ function addGroup() {
         utils.showAlert("error", "", "Error while adding new group", response.message);
       }
     },
-    error: function (jqXHR, exception) {
+    error(jqXHR, exception) {
       utils.enableAll();
       utils.showAlert("error", "", "Error while adding new group", jqXHR.responseText);
       console.log(exception); // eslint-disable-line no-console
@@ -166,15 +166,15 @@ function addGroup() {
 }
 
 function editGroup() {
-  var elem = $(this).attr("id");
-  var tr = $(this).closest("tr");
-  var id = tr.attr("data-id");
-  var name = utils.escapeHtml(tr.find("#name_" + id).val());
-  var status = tr.find("#status_" + id).is(":checked") ? 1 : 0;
-  var desc = utils.escapeHtml(tr.find("#desc_" + id).val());
+  const elem = $(this).attr("id");
+  const tr = $(this).closest("tr");
+  const id = tr.attr("data-id");
+  const name = utils.escapeHtml(tr.find("#name_" + id).val());
+  const status = tr.find("#status_" + id).is(":checked") ? 1 : 0;
+  const desc = utils.escapeHtml(tr.find("#desc_" + id).val());
 
-  var done = "edited";
-  var notDone = "editing";
+  let done = "edited";
+  let notDone = "editing";
   switch (elem) {
     case "status_" + id:
       if (status === 0) {
@@ -207,13 +207,13 @@ function editGroup() {
     dataType: "json",
     data: {
       action: "edit_group",
-      id: id,
-      name: name,
-      desc: desc,
-      status: status,
-      token: token
+      id,
+      name,
+      desc,
+      status,
+      token
     },
-    success: function (response) {
+    success(response) {
       utils.enableAll();
       if (response.success) {
         utils.showAlert("success", "fas fa-pencil-alt", "Successfully " + done + " group", name);
@@ -226,7 +226,7 @@ function editGroup() {
         );
       }
     },
-    error: function (jqXHR, exception) {
+    error(jqXHR, exception) {
       utils.enableAll();
       utils.showAlert(
         "error",
@@ -240,9 +240,9 @@ function editGroup() {
 }
 
 function deleteGroup() {
-  var tr = $(this).closest("tr");
-  var id = tr.attr("data-id");
-  var name = utils.escapeHtml(tr.find("#name_" + id).val());
+  const tr = $(this).closest("tr");
+  const id = tr.attr("data-id");
+  const name = utils.escapeHtml(tr.find("#name_" + id).val());
 
   utils.disableAll();
   utils.showAlert("info", "", "Deleting group...", name);
@@ -250,8 +250,8 @@ function deleteGroup() {
     url: "scripts/pi-hole/php/groups.php",
     method: "post",
     dataType: "json",
-    data: { action: "delete_group", id: id, token: token },
-    success: function (response) {
+    data: { action: "delete_group", id, token },
+    success(response) {
       utils.enableAll();
       if (response.success) {
         utils.showAlert("success", "far fa-trash-alt", "Successfully deleted group ", name);
@@ -260,7 +260,7 @@ function deleteGroup() {
         utils.showAlert("error", "", "Error while deleting group with ID " + id, response.message);
       }
     },
-    error: function (jqXHR, exception) {
+    error(jqXHR, exception) {
       utils.enableAll();
       utils.showAlert("error", "", "Error while deleting group with ID " + id, jqXHR.responseText);
       console.log(exception); // eslint-disable-line no-console

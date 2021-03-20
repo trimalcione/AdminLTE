@@ -7,15 +7,15 @@
 
 /* global utils:false, Chart:false, moment:false */
 
-var start__ = moment().subtract(6, "days");
-var from = moment(start__).utc().valueOf() / 1000;
-var end__ = moment();
-var until = moment(end__).utc().valueOf() / 1000;
-var interval = 0;
+const start__ = moment().subtract(6, "days");
+let from = moment(start__).utc().valueOf() / 1000;
+const end__ = moment();
+let until = moment(end__).utc().valueOf() / 1000;
+let interval = 0;
 
-var dateformat = "MMMM Do YYYY, HH:mm";
+const dateformat = "MMMM Do YYYY, HH:mm";
 
-$(function () {
+$(() => {
   $("#querytime").daterangepicker(
     {
       timePicker: true,
@@ -44,27 +44,27 @@ $(function () {
       showDropdowns: true,
       autoUpdateInput: false
     },
-    function (startt, endt) {
+    (startt, endt) => {
       from = moment(startt).utc().valueOf() / 1000;
       until = moment(endt).utc().valueOf() / 1000;
     }
   );
 });
 
-var timeLineChart;
+let timeLineChart;
 
 function compareNumbers(a, b) {
   return a - b;
 }
 
 function updateQueriesOverTime() {
-  var timeoutWarning = $("#timeoutWarning");
+  const timeoutWarning = $("#timeoutWarning");
 
   $("#queries-over-time .overlay").show();
   timeoutWarning.show();
 
   // Compute interval to obtain about 200 values
-  var num = 200;
+  const num = 200;
   interval = (until - from) / num;
   // Default displaying axis scaling
   timeLineChart.options.scales.xAxes[0].time.unit = "hour";
@@ -87,7 +87,7 @@ function updateQueriesOverTime() {
 
   $.getJSON(
     "api_db.php?getGraphData&from=" + from + "&until=" + until + "&interval=" + interval,
-    function (data) {
+    data => {
       // convert received objects to arrays
       data.domains_over_time = utils.objectToArray(data.domains_over_time);
       data.ads_over_time = utils.objectToArray(data.ads_over_time);
@@ -96,8 +96,8 @@ function updateQueriesOverTime() {
       timeLineChart.data.datasets[0].data = [];
       timeLineChart.data.datasets[1].data = [];
 
-      var dates = [],
-        hour;
+      const dates = [];
+      let hour;
 
       for (hour in data.domains_over_time[0]) {
         if (Object.prototype.hasOwnProperty.call(data.domains_over_time[0], hour)) {
@@ -119,12 +119,11 @@ function updateQueriesOverTime() {
       // Add data for each hour that is available
       for (hour in dates) {
         if (Object.prototype.hasOwnProperty.call(dates, hour)) {
-          var date,
-            total = 0,
+          let total = 0,
             blocked = 0;
-          date = new Date(1000 * dates[hour]);
+          const date = new Date(1000 * dates[hour]);
 
-          var idx = data.domains_over_time[0].indexOf(dates[hour].toString());
+          let idx = data.domains_over_time[0].indexOf(dates[hour].toString());
           if (idx > -1) {
             total = data.domains_over_time[1][idx];
           }
@@ -148,10 +147,10 @@ function updateQueriesOverTime() {
   );
 }
 
-$(function () {
-  var ctx = document.getElementById("queryOverTimeChart").getContext("2d");
-  var blockedColor = "#999";
-  var permittedColor = "#00a65a";
+$(() => {
+  const ctx = document.getElementById("queryOverTimeChart").getContext("2d");
+  const blockedColor = "#999";
+  const permittedColor = "#00a65a";
   timeLineChart = new Chart(ctx, {
     type: utils.getGraphType(),
     data: {
@@ -184,34 +183,34 @@ $(function () {
     options: {
       tooltips: {
         enabled: true,
-        itemSort: function (a, b) {
+        itemSort(a, b) {
           return b.datasetIndex - a.datasetIndex;
         },
         mode: "x-axis",
         callbacks: {
-          title: function (tooltipItem) {
-            var label = tooltipItem[0].xLabel;
-            var time = new Date(label);
-            var fromDate =
+          title(tooltipItem) {
+            const label = tooltipItem[0].xLabel;
+            let time = new Date(label);
+            let fromDate =
               time.getFullYear() +
               "-" +
               utils.padNumber(time.getMonth() + 1) +
               "-" +
               utils.padNumber(time.getDate());
-            var fromTime =
+            const fromTime =
               utils.padNumber(time.getHours()) +
               ":" +
               utils.padNumber(time.getMinutes()) +
               ":" +
               utils.padNumber(time.getSeconds());
             time = new Date(time.valueOf() + 1000 * interval);
-            var untilDate =
+            const untilDate =
               time.getFullYear() +
               "-" +
               utils.padNumber(time.getMonth() + 1) +
               "-" +
               utils.padNumber(time.getDate());
-            var untilTime =
+            let untilTime =
               utils.padNumber(time.getHours()) +
               ":" +
               utils.padNumber(time.getMinutes()) +
@@ -247,11 +246,11 @@ $(function () {
               untilTime
             ).split("\n ");
           },
-          label: function (tooltipItems, data) {
+          label(tooltipItems, data) {
             if (tooltipItems.datasetIndex === 0) {
-              var percentage = 0;
-              var permitted = parseInt(data.datasets[1].data[tooltipItems.index], 10);
-              var blocked = parseInt(data.datasets[0].data[tooltipItems.index], 10);
+              let percentage = 0;
+              const permitted = parseInt(data.datasets[1].data[tooltipItems.index], 10);
+              const blocked = parseInt(data.datasets[0].data[tooltipItems.index], 10);
               if (permitted + blocked > 0) {
                 percentage = (100 * blocked) / (permitted + blocked);
               }
@@ -312,18 +311,18 @@ $("#querytime").on("apply.daterangepicker", function (ev, picker) {
   updateQueriesOverTime();
 });
 
-$("#queryOverTimeChart").click(function (evt) {
-  var activePoints = timeLineChart.getElementAtEvent(evt);
+$("#queryOverTimeChart").click(evt => {
+  const activePoints = timeLineChart.getElementAtEvent(evt);
   if (activePoints.length > 0) {
     //get the internal index in the chart
-    var clickedElementindex = activePoints[0]._index;
+    const clickedElementindex = activePoints[0]._index;
 
     //get specific label by index
-    var label = timeLineChart.data.labels[clickedElementindex];
+    const label = timeLineChart.data.labels[clickedElementindex];
 
     //get value by index
-    var from = label / 1000;
-    var until = label / 1000 + interval;
+    const from = label / 1000;
+    const until = label / 1000 + interval;
     window.location.href = "db_queries.php?from=" + from + "&until=" + until;
   }
 

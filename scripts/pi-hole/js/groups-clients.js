@@ -7,16 +7,16 @@
 
 /* global utils:false */
 
-var table;
-var groups = [];
-var token = $("#token").text();
+let table;
+let groups = [];
+const token = $("#token").text();
 
 function reloadClientSuggestions() {
   $.post(
     "scripts/pi-hole/php/groups.php",
-    { action: "get_unconfigured_clients", token: token },
-    function (data) {
-      var sel = $("#select");
+    { action: "get_unconfigured_clients", token },
+    data => {
+      const sel = $("#select");
       sel.empty();
 
       // In order for the placeholder value to appear, we have to have a blank
@@ -27,13 +27,13 @@ function reloadClientSuggestions() {
       sel.append($("<option />"));
 
       // Add data obtained from API
-      for (var key in data) {
+      for (const key in data) {
         if (!Object.prototype.hasOwnProperty.call(data, key)) {
           continue;
         }
 
-        var text = key;
-        var keyPlain = key;
+        let text = key;
+        let keyPlain = key;
         if (key.startsWith("IP-")) {
           // Mock MAC address for address-only devices
           keyPlain = key.substring(3);
@@ -55,8 +55,8 @@ function reloadClientSuggestions() {
 function getGroups() {
   $.post(
     "scripts/pi-hole/php/groups.php",
-    { action: "get_groups", token: token },
-    function (data) {
+    { action: "get_groups", token },
+    data => {
       groups = data.data;
       initTable();
     },
@@ -64,7 +64,7 @@ function getGroups() {
   );
 }
 
-$(function () {
+$(() => {
   $("#btnAdd").on("click", addClient);
   $("select").select2({
     tags: true,
@@ -76,7 +76,7 @@ $(function () {
   utils.setBsSelectDefaults();
   getGroups();
 
-  $("#select").on("change", function () {
+  $("#select").on("change", () => {
     $("#ip-custom").val("");
     $("#ip-custom").prop("disabled", $("#select option:selected").val() !== "custom");
   });
@@ -86,7 +86,7 @@ function initTable() {
   table = $("#clientsTable").DataTable({
     ajax: {
       url: "scripts/pi-hole/php/groups.php",
-      data: { action: "get_clients", token: token },
+      data: { action: "get_clients", token },
       type: "POST"
     },
     order: [[0, "asc"]],
@@ -97,21 +97,21 @@ function initTable() {
       { data: "groups", searchable: false },
       { data: "name", width: "80px", orderable: false }
     ],
-    drawCallback: function () {
+    drawCallback() {
       $('button[id^="deleteClient_"]').on("click", deleteClient);
       // Remove visible dropdown to prevent orphaning
       $("body > .bootstrap-select.dropdown").remove();
     },
-    rowCallback: function (row, data) {
+    rowCallback(row, data) {
       $(row).attr("data-id", data.id);
-      var tooltip =
+      const tooltip =
         "Added: " +
         utils.datetime(data.date_added, false) +
         "\nLast modified: " +
         utils.datetime(data.date_modified, false) +
         "\nDatabase ID: " +
         data.id;
-      var ipName =
+      let ipName =
         '<code id="ip_' +
         data.id +
         '" title="' +
@@ -131,7 +131,7 @@ function initTable() {
       $("td:eq(0)", row).html(ipName);
 
       $("td:eq(1)", row).html('<input id="comment_' + data.id + '" class="form-control">');
-      var commentEl = $("#comment_" + data.id, row);
+      const commentEl = $("#comment_" + data.id, row);
       commentEl.val(utils.unescapeHtml(data.comment));
       commentEl.on("change", editClient);
 
@@ -139,10 +139,10 @@ function initTable() {
       $("td:eq(2)", row).append(
         '<select class="selectpicker" id="multiselect_' + data.id + '" multiple></select>'
       );
-      var selectEl = $("#multiselect_" + data.id, row);
+      const selectEl = $("#multiselect_" + data.id, row);
       // Add all known groups
-      for (var i = 0; i < groups.length; i++) {
-        var dataSub = "";
+      for (let i = 0; i < groups.length; i++) {
+        let dataSub = "";
         if (!groups[i].enabled) {
           dataSub = 'data-subtext="(disabled)"';
         }
@@ -159,25 +159,25 @@ function initTable() {
       // Initialize bootstrap-select
       selectEl
         // fix dropdown if it would stick out right of the viewport
-        .on("show.bs.select", function () {
-          var winWidth = $(window).width();
-          var dropdownEl = $("body > .bootstrap-select.dropdown");
+        .on("show.bs.select", () => {
+          const winWidth = $(window).width();
+          const dropdownEl = $("body > .bootstrap-select.dropdown");
           if (dropdownEl.length > 0) {
             dropdownEl.removeClass("align-right");
-            var width = dropdownEl.width();
-            var left = dropdownEl.offset().left;
+            const width = dropdownEl.width();
+            const left = dropdownEl.offset().left;
             if (left + width > winWidth) {
               dropdownEl.addClass("align-right");
             }
           }
         })
-        .on("changed.bs.select", function () {
+        .on("changed.bs.select", () => {
           // enable Apply button
           if ($(applyBtn).prop("disabled")) {
             $(applyBtn)
               .addClass("btn-success")
               .prop("disabled", false)
-              .on("click", function () {
+              .on("click", () => {
                 editClient.call(selectEl);
               });
           }
@@ -198,9 +198,9 @@ function initTable() {
             ' class="btn btn-block btn-sm" disabled>Apply</button>'
         );
 
-      var applyBtn = "#btn_apply_" + data.id;
+      const applyBtn = "#btn_apply_" + data.id;
 
-      var button =
+      const button =
         '<button type="button" class="btn btn-danger btn-xs" id="deleteClient_' +
         data.id +
         '">' +
@@ -217,11 +217,11 @@ function initTable() {
       [10, 25, 50, 100, "All"]
     ],
     stateSave: true,
-    stateSaveCallback: function (settings, data) {
+    stateSaveCallback(settings, data) {
       utils.stateSaveCallback("groups-clients-table", data);
     },
-    stateLoadCallback: function () {
-      var data = utils.stateLoadCallback("groups-clients-table");
+    stateLoadCallback() {
+      const data = utils.stateLoadCallback("groups-clients-table");
 
       // Return if not available
       if (data === null) {
@@ -236,7 +236,7 @@ function initTable() {
   });
 
   // Disable autocorrect in the search box
-  var input = document.querySelector("input[type=search]");
+  const input = document.querySelector("input[type=search]");
   if (input !== null) {
     input.setAttribute("autocomplete", "off");
     input.setAttribute("autocorrect", "off");
@@ -244,8 +244,8 @@ function initTable() {
     input.setAttribute("spellcheck", false);
   }
 
-  table.on("order.dt", function () {
-    var order = table.order();
+  table.on("order.dt", () => {
+    const order = table.order();
     if (order[0][0] !== 0 || order[0][1] !== "asc") {
       $("#resetButton").removeClass("hidden");
     } else {
@@ -253,15 +253,15 @@ function initTable() {
     }
   });
 
-  $("#resetButton").on("click", function () {
+  $("#resetButton").on("click", () => {
     table.order([[0, "asc"]]).draw();
     $("#resetButton").addClass("hidden");
   });
 }
 
 function addClient() {
-  var ip = $("#select").val().trim();
-  var comment = utils.escapeHtml($("#new_comment").val());
+  let ip = $("#select").val().trim();
+  const comment = utils.escapeHtml($("#new_comment").val());
 
   utils.disableAll();
   utils.showAlert("info", "", "Adding client...", ip);
@@ -295,8 +295,8 @@ function addClient() {
     url: "scripts/pi-hole/php/groups.php",
     method: "post",
     dataType: "json",
-    data: { action: "add_client", ip: ip, comment: comment, token: token },
-    success: function (response) {
+    data: { action: "add_client", ip, comment, token },
+    success(response) {
       utils.enableAll();
       if (response.success) {
         utils.showAlert("success", "fas fa-plus", "Successfully added client", ip);
@@ -306,7 +306,7 @@ function addClient() {
         utils.showAlert("error", "", "Error while adding new client", response.message);
       }
     },
-    error: function (jqXHR, exception) {
+    error(jqXHR, exception) {
       utils.enableAll();
       utils.showAlert("error", "", "Error while adding new client", jqXHR.responseText);
       console.log(exception); // eslint-disable-line no-console
@@ -315,16 +315,16 @@ function addClient() {
 }
 
 function editClient() {
-  var elem = $(this).attr("id");
-  var tr = $(this).closest("tr");
-  var id = tr.attr("data-id");
-  var groups = tr.find("#multiselect_" + id).val();
-  var ip = utils.escapeHtml(tr.find("#ip_" + id).text());
-  var name = utils.escapeHtml(tr.find("#name_" + id).text());
-  var comment = utils.escapeHtml(tr.find("#comment_" + id).val());
+  const elem = $(this).attr("id");
+  const tr = $(this).closest("tr");
+  const id = tr.attr("data-id");
+  const groups = tr.find("#multiselect_" + id).val();
+  let ip = utils.escapeHtml(tr.find("#ip_" + id).text());
+  const name = utils.escapeHtml(tr.find("#name_" + id).text());
+  const comment = utils.escapeHtml(tr.find("#comment_" + id).val());
 
-  var done = "edited";
-  var notDone = "editing";
+  let done = "edited";
+  let notDone = "editing";
   switch (elem) {
     case "multiselect_" + id:
       done = "edited groups of";
@@ -351,12 +351,12 @@ function editClient() {
     dataType: "json",
     data: {
       action: "edit_client",
-      id: id,
-      groups: groups,
-      token: token,
-      comment: comment
+      id,
+      groups,
+      token,
+      comment
     },
-    success: function (response) {
+    success(response) {
       utils.enableAll();
       if (response.success) {
         utils.showAlert("success", "fas fa-pencil-alt", "Successfully " + done + " client", ip);
@@ -369,7 +369,7 @@ function editClient() {
         );
       }
     },
-    error: function (jqXHR, exception) {
+    error(jqXHR, exception) {
       utils.enableAll();
       utils.showAlert(
         "error",
@@ -383,10 +383,10 @@ function editClient() {
 }
 
 function deleteClient() {
-  var tr = $(this).closest("tr");
-  var id = tr.attr("data-id");
-  var ip = tr.find("#ip_" + id).text();
-  var name = utils.escapeHtml(tr.find("#name_" + id).text());
+  const tr = $(this).closest("tr");
+  const id = tr.attr("data-id");
+  let ip = tr.find("#ip_" + id).text();
+  const name = utils.escapeHtml(tr.find("#name_" + id).text());
 
   if (name.length > 0) {
     ip += " (" + name + ")";
@@ -398,8 +398,8 @@ function deleteClient() {
     url: "scripts/pi-hole/php/groups.php",
     method: "post",
     dataType: "json",
-    data: { action: "delete_client", id: id, token: token },
-    success: function (response) {
+    data: { action: "delete_client", id, token },
+    success(response) {
       utils.enableAll();
       if (response.success) {
         utils.showAlert("success", "far fa-trash-alt", "Successfully deleted client ", ip);
@@ -409,7 +409,7 @@ function deleteClient() {
         utils.showAlert("error", "", "Error while deleting client with ID " + id, response.message);
       }
     },
-    error: function (jqXHR, exception) {
+    error(jqXHR, exception) {
       utils.enableAll();
       utils.showAlert("error", "", "Error while deleting client with ID " + id, jqXHR.responseText);
       console.log(exception); // eslint-disable-line no-console

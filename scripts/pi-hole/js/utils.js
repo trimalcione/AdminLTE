@@ -9,7 +9,7 @@
 
 // Credit: https://stackoverflow.com/a/4835406
 function escapeHtml(text) {
-  var map = {
+  const map = {
     "&": "&amp;",
     "<": "&lt;",
     ">": "&gt;",
@@ -19,13 +19,13 @@ function escapeHtml(text) {
 
   if (text === null) return null;
 
-  return text.replace(/[&<>"']/g, function (m) {
+  return text.replace(/[&<>"']/g, m => {
     return map[m];
   });
 }
 
 function unescapeHtml(text) {
-  var map = {
+  const map = {
     "&amp;": "&",
     "&lt;": "<",
     "&gt;": ">",
@@ -35,22 +35,22 @@ function unescapeHtml(text) {
 
   if (text === null) return null;
 
-  return text.replace(/&(?:amp|lt|gt|quot|#039);/g, function (m) {
+  return text.replace(/&(?:amp|lt|gt|quot|#039);/g, m => {
     return map[m];
   });
 }
 
 // Helper function for converting Objects to Arrays after sorting the keys
 function objectToArray(obj) {
-  var arr = [];
-  var idx = [];
-  var keys = Object.keys(obj);
+  const arr = [];
+  const idx = [];
+  const keys = Object.keys(obj);
 
-  keys.sort(function (a, b) {
+  keys.sort((a, b) => {
     return a - b;
   });
 
-  for (var i = 0; i < keys.length; i++) {
+  for (let i = 0; i < keys.length; i++) {
     arr.push(obj[keys[i]]);
     idx.push(keys[i]);
   }
@@ -62,26 +62,26 @@ function padNumber(num) {
   return ("00" + num).substr(-2, 2);
 }
 
-var info = null; // TODO clear this up; there shouldn't be a global var here
+let info = null; // TODO clear this up; there shouldn't be a global var here
 function showAlert(type, icon, title, message) {
-  var opts = {};
+  let opts = {};
   title = "&nbsp;<strong>" + title + "</strong><br>";
   switch (type) {
     case "info":
       opts = {
         type: "info",
         icon: "far fa-clock",
-        title: title,
-        message: message
+        title,
+        message
       };
       info = $.notify(opts);
       break;
     case "success":
       opts = {
         type: "success",
-        icon: icon,
-        title: title,
-        message: message
+        icon,
+        title,
+        message
       };
       if (info) {
         info.update(opts);
@@ -94,8 +94,8 @@ function showAlert(type, icon, title, message) {
       opts = {
         type: "warning",
         icon: "fas fa-exclamation-triangle",
-        title: title,
-        message: message
+        title,
+        message
       };
       if (info) {
         info.update(opts);
@@ -109,7 +109,7 @@ function showAlert(type, icon, title, message) {
         type: "danger",
         icon: "fas fa-times",
         title: "&nbsp;<strong>Error, something went wrong!</strong><br>",
-        message: message
+        message
       };
       if (info) {
         info.update(opts);
@@ -123,7 +123,8 @@ function showAlert(type, icon, title, message) {
 }
 
 function datetime(date, html) {
-  var format = html === false ? "Y-MM-DD HH:mm:ss z" : "Y-MM-DD [<br class='hidden-lg'>]HH:mm:ss z";
+  const format =
+    html === false ? "Y-MM-DD HH:mm:ss z" : "Y-MM-DD [<br class='hidden-lg'>]HH:mm:ss z";
   return moment.unix(Math.floor(date)).format(format).trim();
 }
 
@@ -145,7 +146,7 @@ function enableAll() {
   $("textarea").prop("disabled", false);
 
   // Enable custom input field only if applicable
-  var ip = $("#select") ? $("#select").val() : null;
+  const ip = $("#select") ? $("#select").val() : null;
   if (ip !== null && ip !== "custom") {
     $("#ip-custom").prop("disabled", true);
   }
@@ -154,10 +155,10 @@ function enableAll() {
 // Pi-hole IPv4/CIDR validator by DL6ER, see regexr.com/50csh
 function validateIPv4CIDR(ip) {
   // One IPv4 element is 8bit: 0 - 256
-  var ipv4elem = "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]?|0)";
+  const ipv4elem = "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]?|0)";
   // CIDR for IPv4 is 1 - 32 bit
-  var v4cidr = "(\\/([1-9]|[1-2][0-9]|3[0-2])){0,1}";
-  var ipv4validator = new RegExp(
+  const v4cidr = "(\\/([1-9]|[1-2][0-9]|3[0-2])){0,1}";
+  const ipv4validator = new RegExp(
     "^" + ipv4elem + "\\." + ipv4elem + "\\." + ipv4elem + "\\." + ipv4elem + v4cidr + "$"
   );
   return ipv4validator.test(ip);
@@ -166,10 +167,10 @@ function validateIPv4CIDR(ip) {
 // Pi-hole IPv6/CIDR validator by DL6ER, see regexr.com/50csn
 function validateIPv6CIDR(ip) {
   // One IPv6 element is 16bit: 0000 - FFFF
-  var ipv6elem = "[0-9A-Fa-f]{1,4}";
+  const ipv6elem = "[0-9A-Fa-f]{1,4}";
   // CIDR for IPv6 is 1- 128 bit
-  var v6cidr = "(\\/([1-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8])){0,1}";
-  var ipv6validator = new RegExp(
+  const v6cidr = "(\\/([1-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8])){0,1}";
+  const ipv6validator = new RegExp(
     "^(((?:" +
       ipv6elem +
       "))*((?::" +
@@ -190,18 +191,18 @@ function validateIPv6CIDR(ip) {
 }
 
 function validateMAC(mac) {
-  var macvalidator = new RegExp(/^([\da-fA-F]{2}:){5}([\da-fA-F]{2})$/);
+  const macvalidator = new RegExp(/^([\da-fA-F]{2}:){5}([\da-fA-F]{2})$/);
   return macvalidator.test(mac);
 }
 
 function validateHostname(name) {
-  var namevalidator = new RegExp(/[^<>;"]/);
+  const namevalidator = new RegExp(/[^<>;"]/);
   return namevalidator.test(name);
 }
 
 // set bootstrap-select defaults
 function setBsSelectDefaults() {
-  var bsSelectDefaults = $.fn.selectpicker.Constructor.DEFAULTS;
+  const bsSelectDefaults = $.fn.selectpicker.Constructor.DEFAULTS;
   bsSelectDefaults.noneSelectedText = "none selected";
   bsSelectDefaults.selectedTextFormat = "count > 1";
   bsSelectDefaults.actionsBox = true;
@@ -225,7 +226,7 @@ function stateSaveCallback(itemName, data) {
 
 function stateLoadCallback(itemName) {
   // Receive previous state from client's local storage area
-  var data = localStorage.getItem(itemName);
+  let data = localStorage.getItem(itemName);
   // Return if not available
   if (data === null) {
     return null;
@@ -253,47 +254,47 @@ function getGraphType() {
 }
 
 function addFromQueryLog(domain, list) {
-  var token = $("#token").text();
-  var alertModal = $("#alertModal");
-  var alProcessing = alertModal.find(".alProcessing");
-  var alSuccess = alertModal.find(".alSuccess");
-  var alFailure = alertModal.find(".alFailure");
-  var alNetworkErr = alertModal.find(".alFailure #alNetErr");
-  var alCustomErr = alertModal.find(".alFailure #alCustomErr");
-  var alList = "#alList";
-  var alDomain = "#alDomain";
+  const token = $("#token").text();
+  const alertModal = $("#alertModal");
+  const alProcessing = alertModal.find(".alProcessing");
+  const alSuccess = alertModal.find(".alSuccess");
+  const alFailure = alertModal.find(".alFailure");
+  const alNetworkErr = alertModal.find(".alFailure #alNetErr");
+  const alCustomErr = alertModal.find(".alFailure #alCustomErr");
+  const alList = "#alList";
+  const alDomain = "#alDomain";
 
   // Exit the function here if the Modal is already shown (multiple running interlock)
   if (alertModal.css("display") !== "none") {
     return;
   }
 
-  var listtype = list === "white" ? "Whitelist" : "Blacklist";
+  const listtype = list === "white" ? "Whitelist" : "Blacklist";
 
   alProcessing.children(alDomain).html(domain);
   alProcessing.children(alList).html(listtype);
   alertModal.modal("show");
 
   // add Domain to List after Modal has faded in
-  alertModal.one("shown.bs.modal", function () {
+  alertModal.one("shown.bs.modal", () => {
     $.ajax({
       url: "scripts/pi-hole/php/groups.php",
       method: "post",
       data: {
-        domain: domain,
-        list: list,
-        token: token,
+        domain,
+        list,
+        token,
         action: "replace_domain",
         comment: "Added from Query Log"
       },
-      success: function (response) {
+      success(response) {
         alProcessing.hide();
         if (!response.success) {
           // Failure
           alNetworkErr.hide();
           alCustomErr.html(response.message);
           alFailure.fadeIn(1000);
-          setTimeout(function () {
+          setTimeout(() => {
             alertModal.modal("hide");
           }, 10000);
         } else {
@@ -301,17 +302,17 @@ function addFromQueryLog(domain, list) {
           alSuccess.children(alDomain).html(domain);
           alSuccess.children(alList).html(listtype);
           alSuccess.fadeIn(1000);
-          setTimeout(function () {
+          setTimeout(() => {
             alertModal.modal("hide");
           }, 2000);
         }
       },
-      error: function () {
+      error() {
         // Network Error
         alProcessing.hide();
         alNetworkErr.show();
         alFailure.fadeIn(1000);
-        setTimeout(function () {
+        setTimeout(() => {
           alertModal.modal("hide");
         }, 8000);
       }
@@ -319,7 +320,7 @@ function addFromQueryLog(domain, list) {
   });
 
   // Reset Modal after it has faded out
-  alertModal.one("hidden.bs.modal", function () {
+  alertModal.one("hidden.bs.modal", () => {
     alProcessing.show();
     alSuccess.add(alFailure).hide();
     alProcessing.add(alSuccess).children(alDomain).html("").end().children(alList).html("");
@@ -329,23 +330,23 @@ function addFromQueryLog(domain, list) {
 
 window.utils = (function () {
   return {
-    escapeHtml: escapeHtml,
-    unescapeHtml: unescapeHtml,
-    objectToArray: objectToArray,
-    padNumber: padNumber,
-    showAlert: showAlert,
-    datetime: datetime,
-    datetimeRelative: datetimeRelative,
-    disableAll: disableAll,
-    enableAll: enableAll,
-    validateIPv4CIDR: validateIPv4CIDR,
-    validateIPv6CIDR: validateIPv6CIDR,
-    setBsSelectDefaults: setBsSelectDefaults,
-    stateSaveCallback: stateSaveCallback,
-    stateLoadCallback: stateLoadCallback,
-    getGraphType: getGraphType,
-    validateMAC: validateMAC,
-    validateHostname: validateHostname,
-    addFromQueryLog: addFromQueryLog
+    escapeHtml,
+    unescapeHtml,
+    objectToArray,
+    padNumber,
+    showAlert,
+    datetime,
+    datetimeRelative,
+    disableAll,
+    enableAll,
+    validateIPv4CIDR,
+    validateIPv6CIDR,
+    setBsSelectDefaults,
+    stateSaveCallback,
+    stateLoadCallback,
+    getGraphType,
+    validateMAC,
+    validateHostname,
+    addFromQueryLog
   };
 })();

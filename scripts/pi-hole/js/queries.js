@@ -7,10 +7,10 @@
 
 /* global moment:false, utils:false */
 
-var tableApi;
-var tableFilters = [];
+let tableApi;
+const tableFilters = [];
 
-var replyTypes = [
+const replyTypes = [
   "N/A",
   "NODATA",
   "NXDOMAIN",
@@ -23,7 +23,7 @@ var replyTypes = [
   "NOTIMP",
   "upstream error"
 ];
-var colTypes = ["time", "query type", "domain", "client", "status", "reply type"];
+const colTypes = ["time", "query type", "domain", "client", "status", "reply type"];
 
 function handleAjaxError(xhr, textStatus) {
   if (textStatus === "timeout") {
@@ -39,15 +39,15 @@ function handleAjaxError(xhr, textStatus) {
   tableApi.draw();
 }
 
-$(function () {
+$(() => {
   // Do we want to filter queries?
-  var GETDict = {};
+  const GETDict = {};
 
   for (const item of window.location.search.substr(1).split("&")) {
     GETDict[item.split("=")[0]] = item.split("=")[1];
   }
 
-  var APIstring = "api.php?getAllQueries";
+  let APIstring = "api.php?getAllQueries";
 
   if ("from" in GETDict && "until" in GETDict) {
     APIstring += "&from=" + GETDict.from;
@@ -71,9 +71,9 @@ $(function () {
   }
 
   tableApi = $("#all-queries").DataTable({
-    rowCallback: function (row, data) {
+    rowCallback(row, data) {
       // DNSSEC status
-      var dnssecStatus;
+      let dnssecStatus;
       switch (data[6]) {
         case "1":
           dnssecStatus = '<br><span class="text-green">SECURE</span>';
@@ -96,7 +96,7 @@ $(function () {
       }
 
       // Query status
-      var fieldtext,
+      let fieldtext,
         buttontext,
         colorClass = false,
         isCNAME = false,
@@ -225,8 +225,8 @@ $(function () {
           }
         );
         $("td:eq(4)", row).off(); // Release any possible previous onClick event handlers
-        $("td:eq(4)", row).click(function () {
-          var newTab = window.open("groups-domains.php?domainid=" + data[9], "_blank");
+        $("td:eq(4)", row).click(() => {
+          const newTab = window.open("groups-domains.php?domainid=" + data[9], "_blank");
           if (newTab) {
             newTab.focus();
           }
@@ -235,13 +235,13 @@ $(function () {
       }
 
       // Substitute domain by "." if empty
-      var domain = data[2];
+      let domain = data[2];
       if (domain.length === 0) {
         domain = ".";
       }
 
       if (isCNAME) {
-        var CNAMEDomain = data[8];
+        const CNAMEDomain = data[8];
         // Add domain in CNAME chain causing the query to have been blocked
         $("td:eq(2)", row).text(domain + "\n(blocked " + CNAMEDomain + ")");
       } else {
@@ -249,8 +249,8 @@ $(function () {
       }
 
       // Check for existence of sixth column and display only if not Pi-holed
-      var replyid = data[5];
-      var replytext =
+      const replyid = data[5];
+      let replytext =
         replyid >= 0 && replyid < replyTypes.length ? replyTypes[replyid] : "? (" + replyid + ")";
 
       replytext += '<input type="hidden" name="id" value="' + replyid + '">';
@@ -258,7 +258,7 @@ $(function () {
       $("td:eq(5)", row).html(replytext);
 
       if (data.length > 7) {
-        var content = $("td:eq(5)", row).html();
+        const content = $("td:eq(5)", row).html();
         $("td:eq(5)", row).html(content + " (" + (0.1 * data[7]).toFixed(1) + "ms)");
       }
     },
@@ -270,12 +270,12 @@ $(function () {
     ajax: {
       url: APIstring,
       error: handleAjaxError,
-      dataSrc: function (data) {
-        var dataIndex = 0;
-        return data.data.map(function (x) {
+      dataSrc(data) {
+        let dataIndex = 0;
+        return data.data.map(x => {
           x[0] = x[0] * 1e6 + dataIndex++;
-          var dnssec = x[5];
-          var reply = x[6];
+          const dnssec = x[5];
+          const reply = x[6];
           x[5] = reply;
           x[6] = dnssec;
           return x;
@@ -288,7 +288,7 @@ $(function () {
     columns: [
       {
         width: "15%",
-        render: function (data, type) {
+        render(data, type) {
           if (type === "display") {
             return moment
               .unix(Math.floor(data / 1e6))
@@ -310,10 +310,10 @@ $(function () {
       [10, 25, 50, 100, "All"]
     ],
     stateSave: true,
-    stateSaveCallback: function (settings, data) {
+    stateSaveCallback(settings, data) {
       utils.stateSaveCallback("query_log_table", data);
     },
-    stateLoadCallback: function () {
+    stateLoadCallback() {
       return utils.stateLoadCallback("query_log_table");
     },
     columnDefs: [
@@ -323,8 +323,8 @@ $(function () {
         defaultContent: ""
       }
     ],
-    initComplete: function () {
-      var api = this.api();
+    initComplete() {
+      const api = this.api();
 
       // Query type IPv4 / IPv6
       api
@@ -375,8 +375,8 @@ $(function () {
       api
         .$("td:eq(4)")
         .click(function (event) {
-          var id = this.children.id.value;
-          var text = this.textContent;
+          const id = this.children.id.value;
+          const text = this.textContent;
           addColumnFilter(event, 4, id + "#" + text);
         })
         .hover(
@@ -392,8 +392,8 @@ $(function () {
       api
         .$("td:eq(5)")
         .click(function (event) {
-          var id = this.children.id.value;
-          var text = this.textContent.split(" ")[0];
+          const id = this.children.id.value;
+          const text = this.textContent.split(" ")[0];
           addColumnFilter(event, 5, id + "#" + text);
         })
         .hover(
@@ -406,7 +406,7 @@ $(function () {
         );
 
       // Disable autocorrect in the search box
-      var input = $("input[type=search]");
+      const input = $("input[type=search]");
       if (input !== null) {
         input.attr("autocomplete", "off");
         input.attr("autocorrect", "off");
@@ -420,7 +420,7 @@ $(function () {
   resetColumnsFilters();
 
   $("#all-queries tbody").on("click", "button", function () {
-    var data = tableApi.row($(this).parents("tr")).data();
+    const data = tableApi.row($(this).parents("tr")).data();
     if (data[4] === "2" || data[4] === "3") {
       utils.addFromQueryLog(data[2], "black");
     } else {
@@ -428,7 +428,7 @@ $(function () {
     }
   });
 
-  $("#resetButton").click(function () {
+  $("#resetButton").click(() => {
     tableApi.search("");
     resetColumnsFilters();
   });
@@ -463,7 +463,7 @@ function addColumnFilter(event, colID, filterstring) {
 }
 
 function resetColumnsFilters() {
-  for (let tablefilter in tableFilters) {
+  for (const tablefilter in tableFilters) {
     if (Object.prototype.hasOwnProperty.call(tableFilters, tablefilter)) {
       tableFilters[tablefilter] = "";
     }
@@ -474,16 +474,16 @@ function resetColumnsFilters() {
 }
 
 function applyColumnFiltering() {
-  var showReset = false;
+  let showReset = false;
 
   for (const [index, value] of tableFilters.entries()) {
     let val = value; // value needs to be manipulated below, which cannot be done with a const
     // Prepare regex filter string
-    var regex = "";
+    let regex = "";
 
     // Split filter string if we received a combined ID#Name column
     if (val !== undefined) {
-      let valArr = val.split("#");
+      const valArr = val.split("#");
       val = valArr[0];
     }
 

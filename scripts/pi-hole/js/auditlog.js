@@ -8,10 +8,10 @@
 /* global utils:false */
 
 // Define global variables
-var auditTimeout = null;
+let auditTimeout = null;
 
 function updateTopLists() {
-  $.getJSON("api.php?topItems=audit", function (data) {
+  $.getJSON("api.php?topItems=audit", data => {
     if ("FTLnotrunning" in data) {
       return;
     }
@@ -19,9 +19,9 @@ function updateTopLists() {
     // Clear tables before filling them with data
     $("#domain-frequency td").parent().remove();
     $("#ad-frequency td").parent().remove();
-    var domaintable = $("#domain-frequency").find("tbody:last");
-    var adtable = $("#ad-frequency").find("tbody:last");
-    var url, domain;
+    const domaintable = $("#domain-frequency").find("tbody:last");
+    const adtable = $("#ad-frequency").find("tbody:last");
+    let url, domain;
     for (domain in data.top_queries) {
       if (Object.prototype.hasOwnProperty.call(data.top_queries, domain)) {
         // Sanitize domain
@@ -42,9 +42,9 @@ function updateTopLists() {
 
     for (domain in data.top_ads) {
       if (Object.prototype.hasOwnProperty.call(data.top_ads, domain)) {
-        var input = domain.split(" ");
+        const input = domain.split(" ");
         // Sanitize domain
-        var printdomain = utils.escapeHtml(input[0]);
+        const printdomain = utils.escapeHtml(input[0]);
         if (input.length > 1) {
           url =
             '<a href="queries.php?domain=' +
@@ -91,21 +91,21 @@ function updateTopLists() {
 }
 
 function add(domain, list) {
-  var token = $("#token").text();
+  const token = $("#token").text();
   $.ajax({
     url: "scripts/pi-hole/php/groups.php",
     method: "post",
     data: {
-      domain: domain,
-      list: list,
-      token: token,
+      domain,
+      list,
+      token,
       action: list === "audit" ? "add_audit" : "add_domain",
       comment: "Added from Audit Log"
     },
-    success: function () {
+    success() {
       updateTopLists();
     },
-    error: function (jqXHR, exception) {
+    error(jqXHR, exception) {
       console.log(exception); // eslint-disable-line no-console
     }
   });
@@ -127,12 +127,12 @@ function auditUrl(url) {
   add(url, "audit");
 }
 
-$(function () {
+$(() => {
   // Pull in data via AJAX
   updateTopLists();
 
   $("#domain-frequency tbody").on("click", "button", function (event) {
-    var url = $(this).parents("tr")[0].textContent.split(" ")[0];
+    const url = $(this).parents("tr")[0].textContent.split(" ")[0];
 
     if (event.target.textContent.trim() === "Blacklist") {
       blacklistUrl(url);
@@ -142,7 +142,7 @@ $(function () {
   });
 
   $("#ad-frequency tbody").on("click", "button", function (event) {
-    var url = $(this).parents("tr")[0].textContent.split(" ")[0];
+    const url = $(this).parents("tr")[0].textContent.split(" ")[0];
 
     if (event.target.textContent.trim() === "Whitelist") {
       whitelistUrl(url);

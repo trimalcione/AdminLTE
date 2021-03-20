@@ -9,17 +9,17 @@
 //Works between all pages
 
 function secondsTimeSpanToHMS(s) {
-  var h = Math.floor(s / 3600); //Get whole hours
+  const h = Math.floor(s / 3600); //Get whole hours
   s -= h * 3600;
-  var m = Math.floor(s / 60); //Get remaining minutes
+  const m = Math.floor(s / 60); //Get remaining minutes
   s -= m * 60;
   return h + ":" + (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s); //zero padding on minutes and seconds
 }
 
 function piholeChanged(action) {
-  var status = $("#status");
-  var ena = $("#pihole-enable");
-  var dis = $("#pihole-disable");
+  const status = $("#status");
+  const ena = $("#pihole-enable");
+  const dis = $("#pihole-disable");
 
   switch (action) {
     case "enabled":
@@ -41,10 +41,10 @@ function piholeChanged(action) {
 }
 
 function countDown() {
-  var ena = $("#enableLabel");
-  var enaT = $("#enableTimer");
-  var target = new Date(parseInt(enaT.html(), 10));
-  var seconds = Math.round((target.getTime() - Date.now()) / 1000);
+  const ena = $("#enableLabel");
+  const enaT = $("#enableTimer");
+  const target = new Date(parseInt(enaT.html(), 10));
+  const seconds = Math.round((target.getTime() - Date.now()) / 1000);
 
   if (seconds > 0) {
     setTimeout(countDown, 1000);
@@ -57,15 +57,15 @@ function countDown() {
 }
 
 function piholeChange(action, duration) {
-  var token = encodeURIComponent($("#token").text());
-  var enaT = $("#enableTimer");
-  var btnStatus;
+  const token = encodeURIComponent($("#token").text());
+  const enaT = $("#enableTimer");
+  let btnStatus;
 
   switch (action) {
     case "enable":
       btnStatus = $("#flip-status-enable");
       btnStatus.html("<i class='fa fa-spinner'> </i>");
-      $.getJSON("api.php?enable&token=" + token, function (data) {
+      $.getJSON("api.php?enable&token=" + token, data => {
         if (data.status === "enabled") {
           btnStatus.html("");
           piholeChanged("enabled");
@@ -76,7 +76,7 @@ function piholeChange(action, duration) {
     case "disable":
       btnStatus = $("#flip-status-disable");
       btnStatus.html("<i class='fa fa-spinner'> </i>");
-      $.getJSON("api.php?disable=" + duration + "&token=" + token, function (data) {
+      $.getJSON("api.php?disable=" + duration + "&token=" + token, data => {
         if (data.status === "disabled") {
           btnStatus.html("");
           piholeChanged("disabled");
@@ -94,9 +94,9 @@ function piholeChange(action, duration) {
 }
 
 function checkMessages() {
-  $.getJSON("api_db.php?status", function (data) {
+  $.getJSON("api_db.php?status", data => {
     if ("message_count" in data && data.message_count > 0) {
-      var title =
+      const title =
         data.message_count > 1
           ? "There are " + data.message_count + " warnings. Click for further details."
           : "There is one warning. Click for further details.";
@@ -115,7 +115,7 @@ function testCookies() {
 
   // set and read cookie
   document.cookie = "cookietest=1";
-  var ret = document.cookie.indexOf("cookietest=") !== -1;
+  const ret = document.cookie.indexOf("cookietest=") !== -1;
 
   // delete cookie
   document.cookie = "cookietest=1; expires=Thu, 01-Jan-1970 00:00:01 GMT";
@@ -125,35 +125,35 @@ function testCookies() {
 
 function initCheckboxRadioStyle() {
   function getCheckboxURL(style) {
-    var extra = style.startsWith("material-") ? "material" : "bootstrap";
+    const extra = style.startsWith("material-") ? "material" : "bootstrap";
     return "style/vendor/icheck-" + extra + ".min.css";
   }
 
   function applyCheckboxRadioStyle(style) {
     boxsheet.attr("href", getCheckboxURL(style));
     // Get all radio/checkboxes for theming, with the exception of the two radio buttons on the custom disable timer
-    var sel = $("input[type='radio'],input[type='checkbox']").not("#selSec").not("#selMin");
+    const sel = $("input[type='radio'],input[type='checkbox']").not("#selSec").not("#selMin");
     sel.parent().removeClass();
     sel.parent().addClass("icheck-" + style);
   }
 
   // Read from local storage, initialize if needed
-  var chkboxStyle = localStorage.getItem("theme_icheck");
+  let chkboxStyle = localStorage.getItem("theme_icheck");
   if (chkboxStyle === null) {
     chkboxStyle = "primary";
   }
 
-  var boxsheet = $('<link href="' + getCheckboxURL(chkboxStyle) + '" rel="stylesheet" />');
+  const boxsheet = $('<link href="' + getCheckboxURL(chkboxStyle) + '" rel="stylesheet" />');
   boxsheet.appendTo("head");
 
   applyCheckboxRadioStyle(chkboxStyle);
 
   // Add handler when on settings page
-  var iCheckStyle = $("#iCheckStyle");
+  const iCheckStyle = $("#iCheckStyle");
   if (iCheckStyle !== null) {
     iCheckStyle.val(chkboxStyle);
     iCheckStyle.change(function () {
-      var themename = $(this).val();
+      const themename = $(this).val();
       localStorage.setItem("theme_icheck", themename);
       applyCheckboxRadioStyle(themename);
     });
@@ -163,8 +163,8 @@ function initCheckboxRadioStyle() {
 function initCPUtemp() {
   function setCPUtemp(unit) {
     localStorage.setItem("tempunit", tempunit);
-    var temperature = parseFloat($("#rawtemp").text());
-    var displaytemp = $("#tempdisplay");
+    let temperature = parseFloat($("#rawtemp").text());
+    const displaytemp = $("#tempdisplay");
     if (!isNaN(temperature)) {
       switch (unit) {
         case "K":
@@ -185,7 +185,7 @@ function initCPUtemp() {
   }
 
   // Read from local storage, initialize if needed
-  var tempunit = localStorage.getItem("tempunit");
+  let tempunit = localStorage.getItem("tempunit");
   if (tempunit === null) {
     tempunit = "C";
   }
@@ -193,7 +193,7 @@ function initCPUtemp() {
   setCPUtemp(tempunit);
 
   // Add handler when on settings page
-  var tempunitSelector = $("#tempunit-selector");
+  const tempunitSelector = $("#tempunit-selector");
   if (tempunitSelector !== null) {
     tempunitSelector.val(tempunit);
     tempunitSelector.change(function () {
@@ -203,10 +203,10 @@ function initCPUtemp() {
   }
 }
 
-$(function () {
-  var enaT = $("#enableTimer");
-  var target = new Date(parseInt(enaT.html(), 10));
-  var seconds = Math.round((target.getTime() - Date.now()) / 1000);
+$(() => {
+  const enaT = $("#enableTimer");
+  const target = new Date(parseInt(enaT.html(), 10));
+  const seconds = Math.round((target.getTime() - Date.now()) / 1000);
   if (seconds > 0) {
     setTimeout(countDown, 100);
   }
@@ -226,38 +226,38 @@ $(function () {
 });
 
 // Handle Enable/Disable
-$("#pihole-enable").on("click", function (e) {
+$("#pihole-enable").on("click", e => {
   e.preventDefault();
   localStorage.removeItem("countDownTarget");
   piholeChange("enable", "");
 });
-$("#pihole-disable-indefinitely").on("click", function (e) {
+$("#pihole-disable-indefinitely").on("click", e => {
   e.preventDefault();
   piholeChange("disable", "0");
 });
-$("#pihole-disable-10s").on("click", function (e) {
+$("#pihole-disable-10s").on("click", e => {
   e.preventDefault();
   piholeChange("disable", "10");
 });
-$("#pihole-disable-30s").on("click", function (e) {
+$("#pihole-disable-30s").on("click", e => {
   e.preventDefault();
   piholeChange("disable", "30");
 });
-$("#pihole-disable-5m").on("click", function (e) {
+$("#pihole-disable-5m").on("click", e => {
   e.preventDefault();
   piholeChange("disable", "300");
 });
-$("#pihole-disable-custom").on("click", function (e) {
+$("#pihole-disable-custom").on("click", e => {
   e.preventDefault();
-  var custVal = $("#customTimeout").val();
+  let custVal = $("#customTimeout").val();
   custVal = $("#btnMins").hasClass("active") ? custVal * 60 : custVal;
   piholeChange("disable", custVal);
 });
 
 // Session timer
-var sessionTimerCounter = document.getElementById("sessiontimercounter");
-var sessionvalidity = parseInt(sessionTimerCounter.textContent, 10);
-var start = new Date();
+const sessionTimerCounter = document.getElementById("sessiontimercounter");
+const sessionvalidity = parseInt(sessionTimerCounter.textContent, 10);
+let start = new Date();
 
 function updateSessionTimer() {
   start = new Date();
@@ -268,15 +268,15 @@ if (sessionvalidity > 0) {
   // setSeconds will correctly handle wrap-around cases
   updateSessionTimer();
 
-  setInterval(function () {
-    var current = new Date();
-    var totalseconds = (start - current) / 1000;
-    var minutes = Math.floor(totalseconds / 60);
+  setInterval(() => {
+    const current = new Date();
+    const totalseconds = (start - current) / 1000;
+    let minutes = Math.floor(totalseconds / 60);
     if (minutes < 10) {
       minutes = "0" + minutes;
     }
 
-    var seconds = Math.floor(totalseconds % 60);
+    let seconds = Math.floor(totalseconds % 60);
     if (seconds < 10) {
       seconds = "0" + seconds;
     }
@@ -292,7 +292,7 @@ if (sessionvalidity > 0) {
 }
 
 // Handle Strg + Enter button on Login page
-$(document).keypress(function (e) {
+$(document).keypress(e => {
   if ((e.keyCode === 10 || e.keyCode === 13) && e.ctrlKey && $("#loginpw").is(":focus")) {
     $("#loginform").attr("action", "settings.php");
     $("#loginform").submit();

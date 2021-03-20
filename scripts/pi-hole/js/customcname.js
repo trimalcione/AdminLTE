@@ -7,12 +7,12 @@
 
 /* global utils:false */
 
-var table;
-var token = $("#token").text();
+let table;
+const token = $("#token").text();
 
 function showAlert(type, message) {
-  var alertElement = null;
-  var messageElement = null;
+  let alertElement = null;
+  let messageElement = null;
 
   switch (type) {
     case "info":
@@ -39,20 +39,20 @@ function showAlert(type, message) {
   alertElement.delay(8000).fadeOut(2000);
 }
 
-$(function () {
+$(() => {
   $("#btnAdd").on("click", addCustomCNAME);
 
   table = $("#customCNAMETable").DataTable({
     ajax: {
       url: "scripts/pi-hole/php/customcname.php",
-      data: { action: "get", token: token },
+      data: { action: "get", token },
       type: "POST"
     },
     columns: [{}, {}, { orderable: false, searchable: false }],
     columnDefs: [
       {
         targets: 2,
-        render: function (data, type, row) {
+        render(data, type, row) {
           return (
             '<button type="button" class="btn btn-danger btn-xs deleteCustomCNAME" data-domain=\'' +
             row[0] +
@@ -71,18 +71,18 @@ $(function () {
     ],
     order: [[0, "asc"]],
     stateSave: true,
-    stateSaveCallback: function (settings, data) {
+    stateSaveCallback(settings, data) {
       utils.stateSaveCallback("LocalCNAMETable", data);
     },
-    stateLoadCallback: function () {
+    stateLoadCallback() {
       return utils.stateLoadCallback("LocalCNAMETable");
     },
-    drawCallback: function () {
+    drawCallback() {
       $(".deleteCustomCNAME").on("click", deleteCustomCNAME);
     }
   });
   // Disable autocorrect in the search box
-  var input = document.querySelector("input[type=search]");
+  const input = document.querySelector("input[type=search]");
   input.setAttribute("autocomplete", "off");
   input.setAttribute("autocorrect", "off");
   input.setAttribute("autocapitalize", "off");
@@ -90,44 +90,44 @@ $(function () {
 });
 
 function addCustomCNAME() {
-  var domain = utils.escapeHtml($("#domain").val());
-  var target = utils.escapeHtml($("#target").val());
+  const domain = utils.escapeHtml($("#domain").val());
+  const target = utils.escapeHtml($("#target").val());
 
   showAlert("info");
   $.ajax({
     url: "scripts/pi-hole/php/customcname.php",
     method: "post",
     dataType: "json",
-    data: { action: "add", domain: domain, target: target, token: token },
-    success: function (response) {
+    data: { action: "add", domain, target, token },
+    success(response) {
       if (response.success) {
         showAlert("success");
         table.ajax.reload();
       } else showAlert("error", response.message);
     },
-    error: function () {
+    error() {
       showAlert("error", "Error while adding this custom CNAME record");
     }
   });
 }
 
 function deleteCustomCNAME() {
-  var domain = $(this).attr("data-domain");
-  var target = $(this).attr("data-target");
+  const domain = $(this).attr("data-domain");
+  const target = $(this).attr("data-target");
 
   showAlert("info");
   $.ajax({
     url: "scripts/pi-hole/php/customcname.php",
     method: "post",
     dataType: "json",
-    data: { action: "delete", domain: domain, target: target, token: token },
-    success: function (response) {
+    data: { action: "delete", domain, target, token },
+    success(response) {
       if (response.success) {
         showAlert("success");
         table.ajax.reload();
       } else showAlert("error", response.message);
     },
-    error: function (jqXHR, exception) {
+    error(jqXHR, exception) {
       showAlert("error", "Error while deleting this custom CNAME record");
       console.log(exception); // eslint-disable-line no-console
     }

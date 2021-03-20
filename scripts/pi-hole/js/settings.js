@@ -6,14 +6,14 @@
  *  Please see LICENSE file for your rights under this license. */
 
 /* global utils:false */
-var token = $("#token").text();
+const token = $("#token").text();
 
-$(function () {
+$(() => {
   $("[data-static]").on("click", function () {
-    var row = $(this).closest("tr");
-    var mac = row.find("#MAC").text();
-    var ip = row.find("#IP").text();
-    var host = row.find("#HOST").text();
+    const row = $(this).closest("tr");
+    const mac = row.find("#MAC").text();
+    const ip = row.find("#IP").text();
+    const host = row.find("#HOST").text();
     $('input[name="AddHostname"]').val(host);
     $('input[name="AddIP"]').val(ip);
     $('input[name="AddMAC"]').val(mac);
@@ -22,10 +22,10 @@ $(function () {
 $(".confirm-poweroff").confirm({
   text: "Are you sure you want to send a poweroff command to your Pi-hole?",
   title: "Confirmation required",
-  confirm: function () {
+  confirm() {
     $("#poweroffform").submit();
   },
-  cancel: function () {
+  cancel() {
     // nothing to do
   },
   confirmButton: "Yes, poweroff",
@@ -38,10 +38,10 @@ $(".confirm-poweroff").confirm({
 $(".confirm-reboot").confirm({
   text: "Are you sure you want to send a reboot command to your Pi-hole?",
   title: "Confirmation required",
-  confirm: function () {
+  confirm() {
     $("#rebootform").submit();
   },
-  cancel: function () {
+  cancel() {
     // nothing to do
   },
   confirmButton: "Yes, reboot",
@@ -55,10 +55,10 @@ $(".confirm-reboot").confirm({
 $(".confirm-restartdns").confirm({
   text: "Are you sure you want to send a restart command to your DNS server?",
   title: "Confirmation required",
-  confirm: function () {
+  confirm() {
     $("#restartdnsform").submit();
   },
-  cancel: function () {
+  cancel() {
     // nothing to do
   },
   confirmButton: "Yes, restart DNS",
@@ -72,10 +72,10 @@ $(".confirm-restartdns").confirm({
 $(".confirm-flushlogs").confirm({
   text: "Are you sure you want to flush your logs?",
   title: "Confirmation required",
-  confirm: function () {
+  confirm() {
     $("#flushlogsform").submit();
   },
-  cancel: function () {
+  cancel() {
     // nothing to do
   },
   confirmButton: "Yes, flush logs",
@@ -89,10 +89,10 @@ $(".confirm-flushlogs").confirm({
 $(".confirm-flusharp").confirm({
   text: "Are you sure you want to flush your network table?",
   title: "Confirmation required",
-  confirm: function () {
+  confirm() {
     $("#flusharpform").submit();
   },
-  cancel: function () {
+  cancel() {
     // nothing to do
   },
   confirmButton: "Yes, flush my network table",
@@ -106,10 +106,10 @@ $(".confirm-flusharp").confirm({
 $(".confirm-disablelogging-noflush").confirm({
   text: "Are you sure you want to disable logging?",
   title: "Confirmation required",
-  confirm: function () {
+  confirm() {
     $("#disablelogsform-noflush").submit();
   },
-  cancel: function () {
+  cancel() {
     // nothing to do
   },
   confirmButton: "Yes, disable logs",
@@ -124,10 +124,10 @@ $(".api-token").confirm({
   text:
     "Make sure that nobody else can scan this code around you. They will have full access to the API without having to know the password. Note that the generation of the QR code will take some time.",
   title: "Confirmation required",
-  confirm: function () {
+  confirm() {
     window.open("scripts/pi-hole/php/api_token.php");
   },
-  cancel: function () {
+  cancel() {
     // nothing to do
   },
   confirmButton: "Yes, show API token",
@@ -144,7 +144,7 @@ $("#DHCPchk").click(function () {
 });
 
 function loadCacheInfo() {
-  $.getJSON("api.php?getCacheInfo", function (data) {
+  $.getJSON("api.php?getCacheInfo", data => {
     if ("FTLnotrunning" in data) {
       return;
     }
@@ -154,7 +154,7 @@ function loadCacheInfo() {
     $("#cache-inserted").text(parseInt(data.cacheinfo["cache-inserted"], 10));
 
     // Highlight early cache removals when present
-    var cachelivefreed = parseInt(data.cacheinfo["cache-live-freed"], 10);
+    const cachelivefreed = parseInt(data.cacheinfo["cache-live-freed"], 10);
     $("#cache-live-freed").text(cachelivefreed);
     if (cachelivefreed > 0) {
       $("#cache-live-freed").parent("tr").addClass("lookatme");
@@ -167,8 +167,8 @@ function loadCacheInfo() {
   });
 }
 
-var leasetable, staticleasetable;
-$(function () {
+let leasetable, staticleasetable;
+$(() => {
   if (document.getElementById("DHCPLeasesTable")) {
     leasetable = $("#DHCPLeasesTable").DataTable({
       dom: "<'row'<'col-sm-12'tr>><'row'<'col-sm-6'i><'col-sm-6'f>>",
@@ -179,10 +179,10 @@ $(function () {
       scrollX: true,
       order: [[2, "asc"]],
       stateSave: true,
-      stateSaveCallback: function (settings, data) {
+      stateSaveCallback(settings, data) {
         utils.stateSaveCallback("activeDhcpLeaseTable", data);
       },
-      stateLoadCallback: function () {
+      stateLoadCallback() {
         return utils.stateLoadCallback("activeDhcpLeaseTable");
       }
     });
@@ -198,17 +198,17 @@ $(function () {
       scrollX: true,
       order: [[2, "asc"]],
       stateSave: true,
-      stateSaveCallback: function (settings, data) {
+      stateSaveCallback(settings, data) {
         utils.stateSaveCallback("staticDhcpLeaseTable", data);
       },
-      stateLoadCallback: function () {
+      stateLoadCallback() {
         return utils.stateLoadCallback("staticDhcpLeaseTable");
       }
     });
   }
 
   //call draw() on each table... they don't render properly with scrollX and scrollY set... ¯\_(ツ)_/¯
-  $('a[data-toggle="tab"]').on("shown.bs.tab", function () {
+  $('a[data-toggle="tab"]').on("shown.bs.tab", () => {
     leasetable.draw();
     staticleasetable.draw();
   });
@@ -217,7 +217,7 @@ $(function () {
 });
 
 // Handle hiding of alerts
-$(function () {
+$(() => {
   $("[data-hide]").on("click", function () {
     $(this)
       .closest("." + $(this).attr("data-hide"))
@@ -226,21 +226,21 @@ $(function () {
 });
 
 // DHCP leases tooltips
-$(function () {
+$(() => {
   $('[data-toggle="tooltip"]').tooltip({ html: true, container: "body" });
 });
 
 // Auto dismissal for info notifications
-$(function () {
-  var alInfo = $("#alInfo");
+$(() => {
+  const alInfo = $("#alInfo");
   if (alInfo.length > 0) {
-    alInfo.delay(3000).fadeOut(2000, function () {
+    alInfo.delay(3000).fadeOut(2000, () => {
       alInfo.hide();
     });
   }
 
   // Disable autocorrect in the search box
-  var input = document.querySelector("input[type=search]");
+  const input = document.querySelector("input[type=search]");
   input.setAttribute("autocomplete", "off");
   input.setAttribute("autocorrect", "off");
   input.setAttribute("autocapitalize", "off");
@@ -256,8 +256,8 @@ $(function () {
 });
 
 // Change "?tab=" parameter in URL for save and reload
-$(".nav-tabs a").on("shown.bs.tab", function (e) {
-  var tab = e.target.hash.substring(1);
+$(".nav-tabs a").on("shown.bs.tab", e => {
+  const tab = e.target.hash.substring(1);
   window.history.pushState("", "", "?tab=" + tab);
   if (tab === "piholedhcp") {
     window.location.reload();
@@ -267,9 +267,9 @@ $(".nav-tabs a").on("shown.bs.tab", function (e) {
 });
 
 // Bar/Smooth chart toggle
-$(function () {
-  var bargraphs = $("#bargraphs");
-  var chkboxData = localStorage.getItem("barchart_chkbox");
+$(() => {
+  const bargraphs = $("#bargraphs");
+  const chkboxData = localStorage.getItem("barchart_chkbox");
 
   if (chkboxData !== null) {
     // Restore checkbox state
@@ -280,17 +280,17 @@ $(function () {
     localStorage.setItem("barchart_chkbox", true);
   }
 
-  bargraphs.click(function () {
+  bargraphs.click(() => {
     localStorage.setItem("barchart_chkbox", bargraphs.prop("checked"));
   });
 });
 
 // Delete dynamic DHCP lease
 $('button[id="removedynamic"]').on("click", function () {
-  var tr = $(this).closest("tr");
-  var ipaddr = utils.escapeHtml(tr.children("#IP").text());
-  var name = utils.escapeHtml(tr.children("#HOST").text());
-  var ipname = name + " (" + ipaddr + ")";
+  const tr = $(this).closest("tr");
+  const ipaddr = utils.escapeHtml(tr.children("#IP").text());
+  const name = utils.escapeHtml(tr.children("#HOST").text());
+  const ipname = name + " (" + ipaddr + ")";
 
   utils.disableAll();
   utils.showAlert("info", "", "Deleting DHCP lease...", ipname);
@@ -300,9 +300,9 @@ $('button[id="removedynamic"]').on("click", function () {
     dataType: "json",
     data: {
       delete_lease: ipaddr,
-      token: token
+      token
     },
-    success: function (response) {
+    success(response) {
       utils.enableAll();
       if (response.delete_lease.startsWith("OK")) {
         utils.showAlert(
@@ -322,7 +322,7 @@ $('button[id="removedynamic"]').on("click", function () {
         utils.showAlert("error", "Error while deleting DHCP lease for " + ipname, response);
       }
     },
-    error: function (jqXHR, exception) {
+    error(jqXHR, exception) {
       utils.enableAll();
       utils.showAlert("error", "Error while deleting DHCP lease for " + ipname, jqXHR.responseText);
       console.log(exception); // eslint-disable-line no-console

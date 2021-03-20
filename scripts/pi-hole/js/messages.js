@@ -7,7 +7,7 @@
 
 /* global utils:false */
 
-var token = $("#token").text();
+const token = $("#token").text();
 
 function renderTimestamp(data, type) {
   // Display and search content
@@ -26,7 +26,7 @@ function multline(input) {
 function renderMessage(data, type, row) {
   // Display and search content
   switch (row.type) {
-    case "REGEX":
+    case "REGEX": {
       return (
         'Encountered an error when processing <a href="groups-domains.php?domainid=' +
         row.blob3 +
@@ -40,8 +40,9 @@ function renderMessage(data, type, row) {
         row.message +
         "</pre>"
       );
+    }
 
-    case "SUBNET":
+    case "SUBNET": {
       return (
         "Client <code>" +
         row.message +
@@ -56,9 +57,10 @@ function renderMessage(data, type, row) {
         row.blob4 +
         "</pre> to get the group configuration for this client."
       );
+    }
 
-    case "HOSTNAME":
-      var hint = " ".repeat(row.blob2 + row.message.length + 2);
+    case "HOSTNAME": {
+      const hint = " ".repeat(row.blob2 + row.message.length + 2);
       return (
         "Hostname contains invalid character <code>" +
         decodeURIComponent(escape(row.blob1))[row.blob2] +
@@ -72,20 +74,23 @@ function renderMessage(data, type, row) {
         hint +
         "&uarr;</pre>"
       );
+    }
 
-    case "DNSMASQ_CONFIG":
+    case "DNSMASQ_CONFIG": {
       return "FTL failed to start due to " + row.message;
+    }
 
-    default:
+    default: {
       return "Unknown message type<pre>" + JSON.stringify(row) + "</pre>";
+    }
   }
 }
 
-$(function () {
+$(() => {
   $("#messagesTable").DataTable({
     ajax: {
       url: "api_db.php?messages",
-      data: { token: token },
+      data: { token },
       type: "POST",
       dataSrc: "messages"
     },
@@ -113,19 +118,19 @@ $(function () {
       emptyTable: "No issues found."
     },
     stateSave: true,
-    stateSaveCallback: function (settings, data) {
+    stateSaveCallback(settings, data) {
       utils.stateSaveCallback("messages-table", data);
     },
-    stateLoadCallback: function () {
-      var data = utils.stateLoadCallback("messages-table");
+    stateLoadCallback() {
+      const data = utils.stateLoadCallback("messages-table");
       // Return if not available
       if (data === null) {
         return null;
       }
 
       // Reset visibility of ID and blob columns
-      var hiddenCols = [0, 4, 5, 6, 7, 8];
-      for (var key in hiddenCols) {
+      const hiddenCols = [0, 4, 5, 6, 7, 8];
+      for (const key in hiddenCols) {
         if (Object.prototype.hasOwnProperty.call(hiddenCols, key)) {
           data.columns[hiddenCols[key]].visible = false;
         }

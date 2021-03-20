@@ -5,18 +5,18 @@
  *  This file is copyright under the latest version of the EUPL.
  *  Please see LICENSE file for your rights under this license. */
 
-var offset,
+let offset,
   timer,
   pre,
   scrolling = true;
 
 // Check every 200msec for fresh data
-var interval = 200;
+const interval = 200;
 
 // Function that asks the API for new data
 function reloadData() {
   clearTimeout(timer);
-  $.getJSON("scripts/pi-hole/php/tailLog.php?FTL&offset=" + offset, function (data) {
+  $.getJSON("scripts/pi-hole/php/tailLog.php?FTL&offset=" + offset, data => {
     pre.append(data.lines);
 
     if (scrolling && offset !== data.offset) {
@@ -29,9 +29,9 @@ function reloadData() {
   timer = setTimeout(reloadData, interval);
 }
 
-$(function () {
+$(() => {
   // Get offset at first loading of page
-  $.getJSON("scripts/pi-hole/php/tailLog.php?FTL", function (data) {
+  $.getJSON("scripts/pi-hole/php/tailLog.php?FTL", data => {
     offset = data.offset;
   });
   pre = $("#output");

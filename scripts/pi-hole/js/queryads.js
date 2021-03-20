@@ -5,13 +5,13 @@
  *  This file is copyright under the latest version of the EUPL.
  *  Please see LICENSE file for your rights under this license. */
 
-var exact = "";
+let exact = "";
 
 function quietfilter(ta, data) {
-  var lines = data.split("\n");
-  for (var i = 0; i < lines.length; i++) {
+  const lines = data.split("\n");
+  for (let i = 0; i < lines.length; i++) {
     if (lines[i].indexOf("results") !== -1 && lines[i].indexOf("0 results") === -1) {
-      var shortstring = lines[i].replace("::: /etc/pihole/", "");
+      let shortstring = lines[i].replace("::: /etc/pihole/", "");
       // Remove "(x results)"
       shortstring = shortstring.replace(/\(.*/, "");
       ta.append(shortstring + "\n");
@@ -20,16 +20,16 @@ function quietfilter(ta, data) {
 }
 
 function eventsource() {
-  var ta = $("#output");
+  const ta = $("#output");
   // process with the current visible domain input field
-  var domain = $("input[id^='domain']:visible").val().trim();
-  var q = $("#quiet");
+  const domain = $("input[id^='domain']:visible").val().trim();
+  const q = $("#quiet");
 
   if (domain.length === 0) {
     return;
   }
 
-  var quiet = false;
+  let quiet = false;
   if (q.val() === "yes") {
     quiet = true;
     exact = "exact";
@@ -41,7 +41,7 @@ function eventsource() {
       method: "GET",
       url: "scripts/pi-hole/php/queryads.php?domain=" + domain.toLowerCase() + "&" + exact + "&IE",
       async: false
-    }).done(function (data) {
+    }).done(data => {
       ta.show();
       ta.empty();
       if (!quiet) {
@@ -54,7 +54,7 @@ function eventsource() {
   }
 
   // eslint-disable-next-line compat/compat
-  var source = new EventSource(
+  const source = new EventSource(
     "scripts/pi-hole/php/queryads.php?domain=" + domain.toLowerCase() + "&" + exact
   );
 
@@ -64,7 +64,7 @@ function eventsource() {
 
   source.addEventListener(
     "message",
-    function (e) {
+    e => {
       if (!quiet) {
         ta.append(e.data);
       } else {
@@ -77,7 +77,7 @@ function eventsource() {
   // Will be called when script has finished
   source.addEventListener(
     "error",
-    function () {
+    () => {
       source.close();
     },
     false
@@ -88,7 +88,7 @@ function eventsource() {
 }
 
 // Handle enter key
-$("#domain_1, #domain_2").keypress(function (e) {
+$("#domain_1, #domain_2").keypress(e => {
   if (e.which === 13) {
     // Enter was pressed, and the input has focus
     exact = "";

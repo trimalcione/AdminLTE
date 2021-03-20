@@ -54,7 +54,7 @@
       "ecmaVersion": 6,
       "sourceType": "script"
     },
-    "esnext": false,
+    "esnext": true,
     "prettier": true,
     "space": 2,
     "ignores": [
