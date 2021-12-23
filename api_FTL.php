@@ -46,20 +46,21 @@ else
 				continue;
 			}
 
+			$flt = floatval($tmp[1]);
 			if(isset($_GET['summary']))
 			{
 				if($tmp[0] !== "ads_percentage_today")
 				{
-					$stats[$tmp[0]] = number_format($tmp[1]);
+					$stats[$tmp[0]] = number_format($flt);
 				}
 				else
 				{
-					$stats[$tmp[0]] = number_format($tmp[1], 1, '.', '');
+					$stats[$tmp[0]] = number_format($flt, 1, '.', '');
 				}
 			}
 			else
 			{
-				$stats[$tmp[0]] = floatval($tmp[1]);
+				$stats[$tmp[0]] = $flt;
 			}
 		}
 		$stats['gravity_last_updated'] = gravity_last_update(true);
