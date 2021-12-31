@@ -9,7 +9,7 @@
 
 // Define global variables
 var timeLineChart, clientsChart;
-var queryTypePieChart, forwardDestinationPieChart;
+var queryTypeChart, forwardDestinationChart;
 
 var THEME_COLORS = [
   "#f56954",
@@ -284,7 +284,7 @@ function updateQueriesOverTime() {
 }
 
 var querytypeids = [];
-function updateQueryTypesPie() {
+function updateQueryTypes() {
   $.getJSON("api.php?getQueryTypes", function (data) {
     if ("FTLnotrunning" in data) {
       return;
@@ -310,73 +310,32 @@ function updateQueryTypesPie() {
     });
 
     // Build a single dataset with the data to be pushed
-    var dd = { data: v, backgroundColor: c };
+    var dd = { data: v, backgroundColor: c, barThickness: 20 };
     // and push it at once
-    queryTypePieChart.data.datasets[0] = dd;
-    queryTypePieChart.data.labels = k;
+    queryTypeChart.data.datasets[0] = dd;
+    queryTypeChart.data.labels = k;
     $("#query-types-pie .overlay").hide();
-    queryTypePieChart.chart.config.options.cutoutPercentage = 50;
-    queryTypePieChart.update();
-    // Don't use rotation animation for further updates
-    queryTypePieChart.options.animation.duration = 0;
-    // Generate legend in separate div
-    $("#query-types-legend").html(queryTypePieChart.generateLegend());
-    $("#query-types-legend > ul > li").prepend(createEyeConElement());
-    $("#query-types-legend > ul > li").click(function (e) {
-      if (isEyeCon(e.target)) {
-        return false;
-      }
+    queryTypeChart.update();
+    // Don't use animation for further updates
+    queryTypeChart.options.animation.duration = 0;
 
-      window.location.href = "queries.php?querytype=" + querytypeids[$(this).index()];
-    });
   }).done(function () {
+    // Count how many bars the chart shows, calculates and sets the height
+    var bars = queryTypeChart.data.datasets[0].data.length;
+    $("#queryTypeChart").parent().height(bars * 48);
+
+    // Compares the height of both graphs and finds the tallest one
+    var max = bars;
+    if (forwardDestinationChart.data.datasets[0].data.length > max) {
+      max = forwardDestinationChart.data.datasets[0].data.length;
+    }
+
+    // Use the value to set the parent's height
+    $(".chart-container").height(max * 48);
+
     // Reload graph after minute
-    setTimeout(updateQueryTypesPie, 60000);
+    setTimeout(updateQueryTypes, 60000);
   });
-}
-
-function hidePieSlice(event) {
-  toggleEyeCon(event.target);
-
-  var legendID = $(event.target).closest(".chart-legend").attr("id");
-  var ci =
-    legendID === "query-types-legend"
-      ? event.view.queryTypePieChart
-      : event.view.forwardDestinationPieChart;
-
-  var listItemParent = $(event.target).closest("li");
-  $(listItemParent).toggleClass("strike");
-
-  var index = $(listItemParent).index();
-  var mobj = ci.data.datasets[0]._meta;
-  var metas = Object.keys(mobj).map(function (e) {
-    return mobj[e];
-  });
-  metas.forEach(function (meta) {
-    var curr = meta.data[index];
-    curr.hidden = !curr.hidden;
-  });
-
-  ci.update();
-}
-
-function toggleEyeCon(target) {
-  var parentListItem = $(target).closest("li");
-  var eyeCon = $(parentListItem).find(".fa-eye, .fa-eye-slash");
-
-  if (eyeCon) {
-    $(eyeCon).toggleClass("fa-eye");
-    $(eyeCon).toggleClass("fa-eye-slash");
-  }
-}
-
-function isEyeCon(target) {
-  // See if click happened on eyeConWrapper or child SVG
-  if ($(target).closest(".eyeConWrapper")[0]) {
-    return true;
-  }
-
-  return false;
 }
 
 function updateClientsOverTime() {
@@ -468,17 +427,7 @@ function updateClientsOverTime() {
     });
 }
 
-function createEyeConElement() {
-  var eyeConWrapper = $("<span></span>")
-    .addClass("eyeConWrapper")
-    .click(function (e) {
-      hidePieSlice(e);
-    });
-  eyeConWrapper.append($("<i class='fa fa-eye'></i>"));
-  return eyeConWrapper;
-}
-
-function updateForwardDestinationsPie() {
+function updateForwardDestinations() {
   $.getJSON("api.php?getForwardDestinations", function (data) {
     if ("FTLnotrunning" in data) {
       return;
@@ -509,32 +458,32 @@ function updateForwardDestinationsPie() {
     });
 
     // Build a single dataset with the data to be pushed
-    var dd = { data: v, backgroundColor: c };
+    var dd = { data: v, backgroundColor: c, barThickness: 20 };
     // and push it at once
-    forwardDestinationPieChart.data.labels = k;
-    forwardDestinationPieChart.data.datasets[0] = dd;
+    forwardDestinationChart.data.labels = k;
+    forwardDestinationChart.data.datasets[0] = dd;
     // and push it at once
     $("#forward-destinations-pie .overlay").hide();
-    forwardDestinationPieChart.chart.config.options.cutoutPercentage = 50;
-    forwardDestinationPieChart.update();
-    // Don't use rotation animation for further updates
-    forwardDestinationPieChart.options.animation.duration = 0;
-    // Generate legend in separate div
-    $("#forward-destinations-legend").html(forwardDestinationPieChart.generateLegend());
-    $("#forward-destinations-legend > ul > li").prepend(createEyeConElement());
-    $("#forward-destinations-legend > ul > li").click(function (e) {
-      if (isEyeCon(e.target)) {
-        return false;
-      }
+    forwardDestinationChart.update();
+    // Don't use animation for further updates
+    forwardDestinationChart.options.animation.duration = 0;
 
-      var obj = encodeURIComponent(e.target.textContent);
-      if (obj.length > 0) {
-        window.location.href = "queries.php?forwarddest=" + obj;
-      }
-    });
   }).done(function () {
+    // Count how many bars the chart shows, calculates and sets the height
+    var bars = forwardDestinationChart.data.datasets[0].data.length;
+    $("#forwardDestinationChart").parent().height(bars * 48);
+
+    // Compares the height of both graphs and finds the tallest one
+    var max = bars;
+    if (queryTypeChart.data.datasets[0].data.length > max) {
+      max = queryTypePieChart.data.datasets[0].data.length;
+    }
+
+    // Use the value to set the parent's height
+    $(".chart-container").height(max * 48);
+
     // Reload graph after one minute
-    setTimeout(updateForwardDestinationsPie, 60000);
+    setTimeout(updateForwardDestinations, 60000);
   });
 }
 
@@ -1048,86 +997,115 @@ $(function () {
     return false;
   });
 
-  if (document.getElementById("queryTypePieChart")) {
-    ctx = document.getElementById("queryTypePieChart").getContext("2d");
-    queryTypePieChart = new Chart(ctx, {
-      type: "doughnut",
+  if (document.getElementById("queryTypeChart")) {
+    ctx = document.getElementById("queryTypeChart").getContext("2d");
+    queryTypeChart = new Chart(ctx, {
+      plugins: [ChartDataLabels],
+      type: "horizontalBar",
       data: {
         labels: [],
-        datasets: [{ data: [] }],
+        datasets: [{
+          data: [],
+        }],
       },
-      options: {
-        elements: {
-          arc: {
-            borderColor: $(".box").css("background-color"),
-          },
-        },
-        legend: {
-          display: false,
-        },
-        tooltips: {
-          enabled: false,
-          custom: customTooltips,
-          callbacks: {
-            title: function () {
-              return "Query types";
-            },
-            label: function (tooltipItems, data) {
-              return doughnutTooltip(tooltipItems, data);
-            },
-          },
-        },
-        animation: {
-          duration: 750,
-        },
-        cutoutPercentage: 0,
-      },
+      options: barChartOptions,
     });
 
     // Pull in data via AJAX
-    updateQueryTypesPie();
+    updateQueryTypes();
   }
 
-  if (document.getElementById("forwardDestinationPieChart")) {
-    ctx = document.getElementById("forwardDestinationPieChart").getContext("2d");
-    forwardDestinationPieChart = new Chart(ctx, {
-      type: "doughnut",
+  if (document.getElementById("forwardDestinationChart")) {
+    ctx = document.getElementById("forwardDestinationChart").getContext("2d");
+    forwardDestinationChart = new Chart(ctx, {
+      plugins: [ChartDataLabels],
+      type: "horizontalBar",
       data: {
         labels: [],
         datasets: [{ data: [] }],
       },
-      options: {
-        elements: {
-          arc: {
-            borderColor: $(".box").css("background-color"),
-          },
-        },
-        legend: {
-          display: false,
-        },
-        tooltips: {
-          enabled: false,
-          custom: customTooltips,
-          callbacks: {
-            title: function () {
-              return "Forward destinations";
-            },
-            label: function (tooltipItems, data) {
-              return doughnutTooltip(tooltipItems, data);
-            },
-          },
-        },
-        animation: {
-          duration: 750,
-        },
-        cutoutPercentage: 0,
-      },
+      options: barChartOptions,
     });
 
     // Pull in data via AJAX
-    updateForwardDestinationsPie();
+    updateForwardDestinations();
   }
 });
+
+var barChartOptions = {
+  maintainAspectRatio: false,
+  responsive: true,
+  plugins: {
+    datalabels: {
+      color: $("body").css("color"),
+      anchor: "end",
+      align: "end",
+      offset: -1,
+      clamp: true,
+      font: {
+        weight: 'bold',
+        lineHeight: 1,
+      }
+    }
+  },
+  layout: {
+    padding: {
+      right: 40,
+    },
+  },
+  legend: {
+    display: false,
+  },
+  tooltips: {
+    enabled: false,
+  },
+  animation: {
+    duration: 750,
+  },
+  cutoutPercentage: 0,
+  onClick: barChartClicked,
+  onHover: function (event, bar) {
+    event.target.style.cursor = bar[0] ? 'pointer' : 'default';
+  },
+  scales: {
+    xAxes: [
+      {
+        display: false,
+        ticks: {
+          beginAtZero: true,
+        },
+      },
+    ],
+    yAxes: [
+      {
+        ticks: {
+          beginAtZero: true,
+          fontColor: $("body").css("color"),
+          mirror: true,
+          z: 1,
+          padding: -1,
+          labelOffset: -17,
+        },
+        gridLines: {
+          color: "transparent",
+          zeroLineColor: "transparent"
+        },
+      },
+    ],
+  },
+};
+
+function barChartClicked(event, array){
+  if (event.target.id == "forwardDestinationChart") {
+    var obj = encodeURIComponent(array[0]._model.label);
+    if (obj.length > 0) {
+      window.location.href = "queries.php?forwarddest=" + obj;
+    }
+  } else {
+    //console.log(event, array);
+    window.location.href = "queries.php?querytype=" + querytypeids[array[0]._index];
+  }
+}
 
 //destroy all chartjs customTooltips on window resize
 window.addEventListener("resize", function () {
