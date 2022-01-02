@@ -133,12 +133,9 @@
         <div class="box-header with-border">
           <h3 class="box-title">Query Types</h3>
         </div>
-        <div class="box-body">
-          <div class="pull-left" style="width:50%">
-            <canvas id="queryTypePieChart" width="120" height="120"></canvas>
-          </div>
-          <div class="pull-left" style="width:50%">
-            <div id="query-types-legend" class="chart-legend"></div>
+        <div class="box-body chart-container">
+          <div class="" style="width:100%!important; position: relative">
+            <canvas id="queryTypeChart"></canvas>
           </div>
         </div>
         <div class="overlay">
@@ -152,12 +149,9 @@
         <div class="box-header with-border">
           <h3 class="box-title">Upstream servers</h3>
         </div>
-        <div class="box-body">
-          <div class="pull-left" style="width:50%">
-            <canvas id="forwardDestinationPieChart" width="120" height="120" class="extratooltipcanvas no-user-select"></canvas>
-          </div>
-          <div class="pull-left" style="width:50%">
-            <div id="forward-destinations-legend" class="chart-legend extratooltipcanvas no-user-select"></div>
+        <div class="box-body chart-container">
+          <div class="" style="width:100%!important; position: relative">
+            <canvas id="forwardDestinationChart" class="extratooltipcanvas no-user-select"></canvas>
           </div>
         </div>
         <div class="overlay">
