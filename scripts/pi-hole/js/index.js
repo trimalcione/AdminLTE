@@ -476,7 +476,7 @@ function updateForwardDestinations() {
     // Compares the height of both graphs and finds the tallest one
     var max = bars;
     if (queryTypeChart.data.datasets[0].data.length > max) {
-      max = queryTypePieChart.data.datasets[0].data.length;
+      max = queryTypeChart.data.datasets[0].data.length;
     }
 
     // Use the value to set the parent's height
@@ -1048,11 +1048,6 @@ var barChartOptions = {
       }
     }
   },
-  layout: {
-    padding: {
-      right: 40,
-    },
-  },
   legend: {
     display: false,
   },
@@ -1070,10 +1065,17 @@ var barChartOptions = {
   scales: {
     xAxes: [
       {
-        display: false,
+        display: true,
         ticks: {
           beginAtZero: true,
         },
+        afterBuildTicks: function(scale) {
+           scale.ticks = updateChartTicks(scale);
+           return;
+        },
+        beforeUpdate: function(oScale) {
+           return;
+        }
       },
     ],
     yAxes: [
@@ -1093,6 +1095,14 @@ var barChartOptions = {
       },
     ],
   },
+};
+
+var updateChartTicks = function(scale) {
+  if(scale.ticks.length < 2)
+    return scale.ticks;
+  var incrementAmount = scale.ticks[scale.ticks.length-1] - scale.ticks[scale.ticks.length-2];
+  scale.ticks.push(scale.ticks[scale.ticks.length-1] + incrementAmount);
+  return scale.ticks;
 };
 
 function barChartClicked(event, array){
