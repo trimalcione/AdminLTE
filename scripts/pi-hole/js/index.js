@@ -1032,6 +1032,7 @@ $(function () {
   }
 });
 
+var IntlF = new Intl.NumberFormat();
 var barChartOptions = {
   maintainAspectRatio: false,
   responsive: true,
@@ -1045,7 +1046,10 @@ var barChartOptions = {
       font: {
         weight: 'bold',
         lineHeight: 1,
-      }
+      },
+      formatter: function(t) {
+          return IntlF.format(t) + "%";
+      },
     }
   },
   legend: {
