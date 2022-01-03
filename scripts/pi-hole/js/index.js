@@ -5,7 +5,7 @@
  *  This file is copyright under the latest version of the EUPL.
  *  Please see LICENSE file for your rights under this license. */
 
-/* global utils:false, Chart:false, updateSessionTimer:false */
+/* global utils:false, Chart:false, updateSessionTimer:false, ChartDataLabels:false */
 
 // Define global variables
 var timeLineChart, clientsChart;
@@ -300,19 +300,22 @@ function updateQueryTypes() {
     querytypeids = [];
     var sorted = [];
     Object.keys(iter).forEach(function (key) {
-        sorted.push([key, iter[key]]);
+      sorted.push([key, iter[key]]);
     });
-    sorted.sort(function(a, b) {
-        return b[1] - a[1];
+    sorted.sort(function (a, b) {
+      return b[1] - a[1];
     });
-    for(var key in sorted) {
-      if (sorted[key][1] > 0) {
-        v.push(sorted[key][1]);
-        c.push(THEME_COLORS[i % THEME_COLORS.length]);
-        k.push(sorted[key][0]);
-        querytypeids.push(i + 1);
+    for (var key in sorted) {
+      if (Object.prototype.hasOwnProperty.call(sorted, key)) {
+        if (sorted[key][1] > 0) {
+          v.push(sorted[key][1]);
+          c.push(THEME_COLORS[i % THEME_COLORS.length]);
+          k.push(sorted[key][0]);
+          querytypeids.push(i + 1);
+        }
+
+        i++;
       }
-      i++;
     }
 
     // Build a single dataset with the data to be pushed
@@ -324,11 +327,12 @@ function updateQueryTypes() {
     queryTypeChart.update();
     // Don't use animation for further updates
     queryTypeChart.options.animation.duration = 0;
-
   }).done(function () {
     // Count how many bars the chart shows, calculates and sets the height
     var bars = queryTypeChart.data.datasets[0].data.length;
-    $("#queryTypeChart").parent().height(bars * 48);
+    $("#queryTypeChart")
+      .parent()
+      .height(bars * 48);
 
     // Compares the height of both graphs and finds the tallest one
     var max = bars;
@@ -456,8 +460,8 @@ function updateForwardDestinations() {
       values.push([key, value, THEME_COLORS[i++ % THEME_COLORS.length]]);
     });
 
-    values.sort(function(a, b) {
-        return b[1] - a[1];
+    values.sort(function (a, b) {
+      return b[1] - a[1];
     });
 
     // Split data into individual arrays for the graphs
@@ -477,11 +481,12 @@ function updateForwardDestinations() {
     forwardDestinationChart.update();
     // Don't use animation for further updates
     forwardDestinationChart.options.animation.duration = 0;
-
   }).done(function () {
     // Count how many bars the chart shows, calculates and sets the height
     var bars = forwardDestinationChart.data.datasets[0].data.length;
-    $("#forwardDestinationChart").parent().height(bars * 48);
+    $("#forwardDestinationChart")
+      .parent()
+      .height(bars * 48);
 
     // Compares the height of both graphs and finds the tallest one
     var max = bars;
@@ -752,34 +757,6 @@ function updateSummaryData(runOnce) {
     });
 }
 
-function doughnutTooltip(tooltipItems, data) {
-  var dataset = data.datasets[tooltipItems.datasetIndex];
-  var label = data.labels[tooltipItems.index];
-  // Compute share of total and of displayed
-  var scale = 0,
-    total = 0;
-  var metas = Object.keys(dataset._meta).map(function (e) {
-    return dataset._meta[e];
-  });
-  metas.forEach(function (meta) {
-    meta.data.forEach(function (val, i) {
-      if (val.hidden) scale += dataset.data[i];
-      total += dataset.data[i];
-    });
-  });
-  if (scale === 0)
-    // All items shown
-    return label + ": " + dataset.data[tooltipItems.index].toFixed(1) + "%";
-  return (
-    label +
-    ":<br>- " +
-    dataset.data[tooltipItems.index].toFixed(1) +
-    "% of all queries<br>- " +
-    ((dataset.data[tooltipItems.index] * 100) / (total - scale)).toFixed(1) +
-    "% of shown items"
-  );
-}
-
 $(function () {
   // Pull in data via AJAX
   updateSummaryData();
@@ -1014,9 +991,11 @@ $(function () {
       type: "horizontalBar",
       data: {
         labels: [],
-        datasets: [{
-          data: [],
-        }],
+        datasets: [
+          {
+            data: [],
+          },
+        ],
       },
       options: barChartOptions,
     });
@@ -1054,13 +1033,13 @@ var barChartOptions = {
       offset: -1,
       clamp: true,
       font: {
-        weight: 'bold',
+        weight: "bold",
         lineHeight: 1,
       },
-      formatter: function(t) {
-          return IntlF.format(t) + "%";
+      formatter: function (t) {
+        return IntlF.format(t) + "%";
       },
-    }
+    },
   },
   legend: {
     display: false,
@@ -1074,7 +1053,7 @@ var barChartOptions = {
   cutoutPercentage: 0,
   onClick: barChartClicked,
   onHover: function (event, bar) {
-    event.target.style.cursor = bar[0] ? 'pointer' : 'default';
+    event.target.style.cursor = bar[0] ? "pointer" : "default";
   },
   scales: {
     xAxes: [
@@ -1083,13 +1062,10 @@ var barChartOptions = {
         ticks: {
           beginAtZero: true,
         },
-        afterBuildTicks: function(scale) {
-           scale.ticks = updateChartTicks(scale);
-           return;
+        afterBuildTicks: function (scale) {
+          scale.ticks = updateChartTicks(scale);
         },
-        beforeUpdate: function(oScale) {
-           return;
-        }
+        beforeUpdate: function () {},
       },
     ],
     yAxes: [
@@ -1104,23 +1080,21 @@ var barChartOptions = {
         },
         gridLines: {
           color: "transparent",
-          zeroLineColor: "transparent"
+          zeroLineColor: "transparent",
         },
       },
     ],
   },
 };
 
-var updateChartTicks = function(scale) {
-  if(scale.ticks.length < 2)
-    return scale.ticks;
-  var incrementAmount = scale.ticks[scale.ticks.length-1] - scale.ticks[scale.ticks.length-2];
-  scale.ticks.push(scale.ticks[scale.ticks.length-1] + incrementAmount);
+var updateChartTicks = function (scale) {
+  if (scale.ticks.length < 2) return scale.ticks;
+  scale.ticks.push(2 * scale.ticks[scale.ticks.length - 1] - scale.ticks[scale.ticks.length - 2]);
   return scale.ticks;
 };
 
-function barChartClicked(event, array){
-  if (event.target.id == "forwardDestinationChart") {
+function barChartClicked(event, array) {
+  if (event.target.id === "forwardDestinationChart") {
     var obj = encodeURIComponent(array[0]._model.label);
     if (obj.length > 0) {
       window.location.href = "queries.php?forwarddest=" + obj;
