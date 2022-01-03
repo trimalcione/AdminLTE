@@ -340,6 +340,11 @@ function updateQueryTypes() {
       max = forwardDestinationChart.data.datasets[0].data.length;
     }
 
+    // Check if we have to add padding so the value label isn't cropped
+    var maxval = Math.max.apply(null, queryTypeChart.data.datasets[0].data);
+    var maxtick = Math.max.apply(null, queryTypeChart.chart.scales["x-axis-0"].ticks);
+    queryTypeChart.canvas.style.paddingRight = maxtick - maxval < 5 ? "40px" : "0px";
+
     // Use the value to set the parent's height
     $(".chart-container").height(max * 48);
 
@@ -1062,10 +1067,6 @@ var barChartOptions = {
         ticks: {
           beginAtZero: true,
         },
-        afterBuildTicks: function (scale) {
-          scale.ticks = updateChartTicks(scale);
-        },
-        beforeUpdate: function () {},
       },
     ],
     yAxes: [
@@ -1085,12 +1086,6 @@ var barChartOptions = {
       },
     ],
   },
-};
-
-var updateChartTicks = function (scale) {
-  if (scale.ticks.length < 2) return scale.ticks;
-  scale.ticks.push(2 * scale.ticks[scale.ticks.length - 1] - scale.ticks[scale.ticks.length - 2]);
-  return scale.ticks;
 };
 
 function barChartClicked(event, array) {
