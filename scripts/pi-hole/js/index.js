@@ -298,16 +298,22 @@ function updateQueryTypes() {
     var iter = Object.prototype.hasOwnProperty.call(data, "querytypes") ? data.querytypes : data;
 
     querytypeids = [];
+    var sorted = [];
     Object.keys(iter).forEach(function (key) {
-      if (iter[key] > 0) {
-        v.push(iter[key]);
+        sorted.push([key, iter[key]]);
+    });
+    sorted.sort(function(a, b) {
+        return b[1] - a[1];
+    });
+    for(var key in sorted) {
+      if (sorted[key][1] > 0) {
+        v.push(sorted[key][1]);
         c.push(THEME_COLORS[i % THEME_COLORS.length]);
-        k.push(key);
+        k.push(sorted[key][0]);
         querytypeids.push(i + 1);
       }
-
       i++;
-    });
+    }
 
     // Build a single dataset with the data to be pushed
     var dd = { data: v, backgroundColor: c, barThickness: 20 };
@@ -448,6 +454,10 @@ function updateForwardDestinations() {
       }
 
       values.push([key, value, THEME_COLORS[i++ % THEME_COLORS.length]]);
+    });
+
+    values.sort(function(a, b) {
+        return b[1] - a[1];
     });
 
     // Split data into individual arrays for the graphs
