@@ -324,16 +324,16 @@ function updateQueryTypes() {
     queryTypeChart.data.datasets[0] = dd;
     queryTypeChart.data.labels = k;
     $("#query-types-pie .overlay").hide();
-
-    // Check if we have to add padding so the value label isn't cropped
-    var maxval = Math.max.apply(null, v);
-    var maxtick = Math.ceil(maxval / 10) * 10;
-    queryTypeChart.options.layout.padding.right = maxtick - maxval <= 5 ? "44" : "0";
-
     queryTypeChart.update();
     // Don't use animation for further updates
     queryTypeChart.options.animation.duration = 0;
   }).done(function () {
+    // Check if we have to add padding so the value label isn't cropped
+    var maxval = Math.max.apply(null, queryTypeChart.data.datasets[0].data);
+    var maxtick = queryTypeChart.chart.scales["x-axis-0"].max;
+    queryTypeChart.options.layout.padding.right = maxtick - maxval <= 5 ? "44" : "0";
+    queryTypeChart.update();
+
     // Count how many bars the chart shows, calculates and sets the height
     var bars = queryTypeChart.data.datasets[0].data.length;
     $("#queryTypeChart")
@@ -484,16 +484,16 @@ function updateForwardDestinations() {
     forwardDestinationChart.data.datasets[0] = dd;
     // and push it at once
     $("#forward-destinations-pie .overlay").hide();
-
-    // Check if we have to add padding so the value label isn't cropped
-    var maxval = Math.max.apply(null, v);
-    var maxtick = Math.ceil(maxval / 10) * 10;
-    forwardDestinationChart.options.layout.padding.right = maxtick - maxval <= 5 ? "44" : "0";
-
     forwardDestinationChart.update();
     // Don't use animation for further updates
     forwardDestinationChart.options.animation.duration = 0;
   }).done(function () {
+    // Check if we have to add padding so the value label isn't cropped
+    var maxval = Math.max.apply(null, forwardDestinationChart.data.datasets[0].data);
+    var maxtick = forwardDestinationChart.chart.scales["x-axis-0"].max;
+    forwardDestinationChart.options.layout.padding.right = maxtick - maxval <= 5 ? "44" : "0";
+    forwardDestinationChart.update();
+
     // Count how many bars the chart shows, calculates and sets the height
     var bars = forwardDestinationChart.data.datasets[0].data.length;
     $("#forwardDestinationChart")
