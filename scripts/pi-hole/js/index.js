@@ -328,10 +328,7 @@ function updateQueryTypes() {
     // Don't use animation for further updates
     queryTypeChart.options.animation.duration = 0;
   }).done(function () {
-    // Check if we have to add padding so the value label isn't cropped
-    var maxval = Math.max.apply(null, queryTypeChart.data.datasets[0].data);
-    var maxtick = queryTypeChart.chart.scales["x-axis-0"].max;
-    queryTypeChart.options.layout.padding.right = maxtick - maxval <= 5 ? "44" : "0";
+    queryTypeChart.options.scales.xAxes[0].ticks.max = calcLastTick(queryTypeChart);
     queryTypeChart.update();
 
     // Count how many bars the chart shows, calculates and sets the height
@@ -482,16 +479,12 @@ function updateForwardDestinations() {
     // and push it at once
     forwardDestinationChart.data.labels = k;
     forwardDestinationChart.data.datasets[0] = dd;
-    // and push it at once
     $("#forward-destinations-pie .overlay").hide();
     forwardDestinationChart.update();
     // Don't use animation for further updates
     forwardDestinationChart.options.animation.duration = 0;
   }).done(function () {
-    // Check if we have to add padding so the value label isn't cropped
-    var maxval = Math.max.apply(null, forwardDestinationChart.data.datasets[0].data);
-    var maxtick = forwardDestinationChart.chart.scales["x-axis-0"].max;
-    forwardDestinationChart.options.layout.padding.right = maxtick - maxval <= 5 ? "44" : "0";
+    forwardDestinationChart.options.scales.xAxes[0].ticks.max = calcLastTick(forwardDestinationChart);
     forwardDestinationChart.update();
 
     // Count how many bars the chart shows, calculates and sets the height
@@ -1072,7 +1065,12 @@ var barChartOptions = {
       {
         display: true,
         ticks: {
+          fontColor: $(".graphs-ticks").css("color"),
           beginAtZero: true,
+        },
+        gridLines: {
+          color: $(".graphs-grid").css("background-color"),
+          zeroLineColor: $(".graphs-grid").css("background-color"),
         },
       },
     ],
@@ -1088,7 +1086,7 @@ var barChartOptions = {
         },
         gridLines: {
           color: "transparent",
-          zeroLineColor: "transparent",
+          zeroLineColor: $(".graphs-grid").css("background-color"),
         },
       },
     ],
@@ -1104,6 +1102,26 @@ function barChartClicked(event, array) {
   } else {
     //console.log(event, array);
     window.location.href = "queries.php?querytype=" + querytypeids[array[0]._index];
+  }
+}
+
+// Check if we have to add padding so the value label isn't cropped
+function calcLastTick(chart) {
+  var lasttick = chart.scales["x-axis-0"].max;
+  var tickstep = lasttick - chart.scales["x-axis-0"].ticks.at(-2);
+  var maxval = Math.max.apply(null, chart.data.datasets[0].data);
+
+  // width of entire x-scale (in pixels)
+  var scaleW = chart.scales["x-axis-0"].width;
+
+  // width of the longest bar (in pixels)
+  var barW = (scaleW / lasttick) * maxval;
+
+  if(scaleW - barW < 44){
+    // If there's no space to fit the label, adds an extra tick to the scale
+    return lasttick + tickstep;
+  } else {
+    return lasttick;
   }
 }
 
