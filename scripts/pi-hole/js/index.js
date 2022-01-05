@@ -328,7 +328,12 @@ function updateQueryTypes() {
     // Don't use animation for further updates
     queryTypeChart.options.animation.duration = 0;
   }).done(function () {
-    queryTypeChart.options.scales.xAxes[0].ticks.max = calcLastTick(queryTypeChart);
+    var maxtick = calcLastTick(queryTypeChart);
+    if (maxtick > 100) {
+      queryTypeChart.options.layout.padding.right = "44";
+    } else {
+      queryTypeChart.options.scales.xAxes[0].ticks.max = maxtick;
+    }
     queryTypeChart.update();
 
     // Count how many bars the chart shows, calculates and sets the height
@@ -484,7 +489,12 @@ function updateForwardDestinations() {
     // Don't use animation for further updates
     forwardDestinationChart.options.animation.duration = 0;
   }).done(function () {
-    forwardDestinationChart.options.scales.xAxes[0].ticks.max = calcLastTick(forwardDestinationChart);
+    var maxtick = calcLastTick(forwardDestinationChart);
+    if (maxtick > 100) {
+      forwardDestinationChart.options.layout.padding.right = "44";
+    } else {
+      forwardDestinationChart.options.scales.xAxes[0].ticks.max = maxtick;
+    }
     forwardDestinationChart.update();
 
     // Count how many bars the chart shows, calculates and sets the height
@@ -1117,7 +1127,7 @@ function calcLastTick(chart) {
   // width of the longest bar (in pixels)
   var barW = (scaleW / lasttick) * maxval;
 
-  if(scaleW - barW < 44){
+  if (scaleW - barW < 44) {
     // If there's no space to fit the label, adds an extra tick to the scale
     return lasttick + tickstep;
   } else {
