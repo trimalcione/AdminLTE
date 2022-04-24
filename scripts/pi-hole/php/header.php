@@ -265,7 +265,6 @@ if($auth) {
             <a href="#" class="sidebar-toggle-svg" data-toggle="push-menu" role="button">
                 <i aria-hidden="true" class="fa fa-bars"></i>
                 <span class="sr-only">Toggle navigation</span>
-                <span class="warning-count hidden" id="top-warning-count"></span>
             </a>
             <div class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
@@ -657,6 +656,7 @@ if($auth) {
                 <li<?php if($scriptname === "login"){ ?> class="active"<?php } ?>>
                     <a href="index.php?login">
                         <i class="fa fa-fw menu-icon fa-user"></i> <span>Login</span>
+                        <span class="warning-count hidden" id="login-warning-count"></span>
                     </a>
                 </li>
                 <?php } ?>

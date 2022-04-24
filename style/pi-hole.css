@@ -546,11 +546,6 @@ td.details-control {
   .layout-boxed:not(.sidebar-collapse) .login-help p {
     font-size: clamp(11px, (min(100vw, 1250px) - 380px) / 47, 15px);
   }
-
-  /* hide warning icon only when logged in and menu is not collapsed */
-  .logged-in:not(.sidebar-collapse) #top-warning-count {
-    display: none;
-  }
 }
 
 /*** Warning icon and count ***/
@@ -569,11 +564,8 @@ td.details-control {
   font-size: 12px;
 }
 
-#top-warning-count {
-  top: 55%;
-  left: 50%;
-  right: unset;
-  margin: 0;
+#login-warning-count {
+  margin: -0.7em -22px;
 }
 
 .treeview-menu .warning-count {
