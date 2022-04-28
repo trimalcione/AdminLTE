@@ -9,9 +9,8 @@ require "scripts/pi-hole/php/header.php";
 require "scripts/pi-hole/php/savesettings.php";
 require_once "scripts/pi-hole/php/FTL.php";
 // Reread ini file as things might have been changed
-// DEFAULT_FTLCONFFILE is set in "scripts/pi-hole/php/FTL.php";
 $setupVars = parse_ini_file("/etc/pihole/setupVars.conf");
-$piholeFTLConf = piholeFTLConfig(DEFAULT_FTLCONFFILE ,true);
+$piholeFTLConf = piholeFTLConfig(true);
 
 // Handling of PHP internal errors
 $last_error = error_get_last();
@@ -629,16 +628,23 @@ if (isset($_GET['tab']) && in_array($_GET['tab'], array("sysadmin", "dns", "piho
                                                             <th>MAC address</th>
                                                             <th>IP address</th>
                                                             <th>Hostname</th>
+                                                            <td class="text-bold">Static IP</td>
                                                             <td></td>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <?php foreach ($dhcp_leases as $lease) { ?>
+                                                        <?php foreach ($dhcp_leases as $lease) { 
+                                                        $static_ip = in_array($lease["IP"], array_column($dhcp_static_leases, "IP")); ?>
                                                         <tr data-placement="auto" data-container="body" data-toggle="tooltip"
                                                             title="Lease type: IPv<?php echo $lease["type"]; ?><br/>Remaining lease time: <?php echo $lease["TIME"]; ?><br/>DHCP UID: <?php echo $lease["clid"]; ?>">
                                                             <td id="MAC"><?php echo $lease["hwaddr"]; ?></td>
                                                             <td id="IP" data-order="<?php echo bin2hex(inet_pton($lease["IP"])); ?>"><?php echo $lease["IP"]; ?></td>
                                                             <td id="HOST"><?php echo $lease["host"]; ?></td>
+                                                            <td class="text-center">
+                                                                <?php if($static_ip) { ?>
+                                                                    <span class="badge">static</span>
+                                                                <?php } ?>
+                                                            </td>
                                                             <td>
                                                                 <button type="button" class="btn btn-danger btn-xs" id="removedynamic">
                                                                     <span class="fas fas fa-trash-alt"></span>
